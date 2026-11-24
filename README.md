@@ -6,7 +6,7 @@ Convert, edit and download files. Private by default.
 
 Converters and editors run **in your browser**: files are never uploaded. An optional small server adds a yt-dlp powered downloader.
 
-**Live site:** `https://YOUR-USER.github.io/YOUR-REPO/` (after you follow *Go live on GitHub Pages* below)
+**Live site:** `https://socialmania99.github.io/donekwik/` (after you follow *Go live on GitHub Pages* below)
 
 ## What works where
 
@@ -38,7 +38,7 @@ GitHub Pages is static hosting, so it cannot run yt-dlp. To download videos, run
 
 **Option B: fully bundled (recommended).** Set *Source* to **GitHub Actions**. The included workflow (`.github/workflows/pages.yml`) installs the libraries and builds a site with everything bundled on every push to `main`. In *Settings, Secrets and variables, Actions, Variables*, add `CONTACT` with your takedown email address.
 
-4. After the first deploy, your site is at `https://YOUR-USER.github.io/YOUR-REPO/`.
+4. After the first deploy, your site is at `https://socialmania99.github.io/donekwik/`.
 
 To rebuild `docs/` yourself: `npm install && CONTACT=you@example.com npm run build:pages`, then commit `docs/`. To preview: `npm run preview:pages` and open http://localhost:8080.
 
