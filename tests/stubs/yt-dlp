@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+# TEST STUB that imitates the yt-dlp command line so the DoneKwik bridge can be exercised offline.
+# It records every call to $STUB_LOG. It does not download anything. Real yt-dlp is only verified in a networked environment.
+import sys, os, json, re
+a = sys.argv[1:]
+open(os.environ.get('STUB_LOG', '/tmp/stub.log'), 'a').write(json.dumps(a) + '\n')
+url = a[-1] if a else ''
+if '-J' in a:
+    if 'fail' in url: sys.stderr.write('ERROR: Unsupported URL: ' + url + '\n'); sys.exit(1)
+    live = 'live' in url
+    print(json.dumps({'title': 'Stub Video', 'uploader': 'Stub Channel', 'duration': 9999999 if 'long' in url else 30, 'is_live': live, 'thumbnail': None, 'extractor_key': 'Stub',
+                      'formats': [{'height': 1080}, {'height': 720}, {'height': 360}, {'height': None}], 'subtitles': {'en': [], 'hi': []}}))
+    sys.exit(0)
+if 'fail' in url: sys.stderr.write('ERROR: Unsupported URL: ' + url + '\n'); sys.exit(1)
+o = a[a.index('-o') + 1]
+def val(flag, default=None): return a[a.index(flag) + 1] if flag in a else default
+ext = 'mp4'
+if '-x' in a: ext = val('--audio-format', 'mp3')
+elif '--write-thumbnail' in a: ext = val('--convert-thumbnails', 'jpg')
+elif '--write-subs' in a: ext = val('--convert-subs', 'srt')
+elif '--merge-output-format' in a: ext = val('--merge-output-format')
+elif '--recode-video' in a: ext = val('--recode-video')
+path = o.replace('%(title).80s', 'Stub_Video').replace('%(ext)s', ext)
+for p in (10, 55.5, 100): print('P|%6.1f%%|1.5MiB/s|00:0%d' % (p, 3 if p < 100 else 0), flush=True)
+open(path, 'wb').write(b'STUBDATA' * 250)

@@ -1,0 +1,27 @@
+{
+  "name": "donekwik",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DoneKwik: private in-browser converters and editors, plus an optional yt-dlp powered downloader server.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "vendor": "node scripts/vendor.js",
+    "check": "node --check server.js && node --check ytdl.js && node --check sw.js && node --check scripts/vendor.js",
+    "audit": "python3 tests/audit.py",
+    "build:pages": "node scripts/build-pages.js",
+    "preview:pages": "python3 -m http.server 8080 --directory docs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "jszip": "3.10.1",
+    "pdf-lib": "1.17.1",
+    "marked": "4.3.0",
+    "pdfjs-dist": "6.2.108",
+    "heic2any": "0.0.4",
+    "lamejs": "1.2.1"
+  },
+  "license": "MIT"
+}

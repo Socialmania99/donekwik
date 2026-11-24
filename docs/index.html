@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DoneKwik – downloader, converters and editors</title>
+<meta name="description" content="DoneKwik: convert, edit and download files. Images, audio, video, PDF, spreadsheets and documents run in your browser and are never uploaded.">
+<meta name="theme-color" content="#5a3fd0">
+<meta property="og:title" content="DoneKwik">
+<meta property="og:description" content="Convert, edit and download files. Private by default.">
+<meta property="og:type" content="website">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2048%2048%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%237b5cf0%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%234d34c4%27%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2748%27%20height%3D%2748%27%20rx%3D%2713%27%20fill%3D%27url%28%23g%29%27%2F%3E%3Cpath%20d%3D%27M13%2025.6l7.8%207.8%2015.2-16.8%27%20fill%3D%27none%27%20stroke%3D%27%23fff%27%20stroke-width%3D%275.2%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%2F%3E%3Cpath%20d%3D%27M6%2018h8M4%2026h6%27%20stroke%3D%27%23fff%27%20stroke-opacity%3D%27.6%27%20stroke-width%3D%273.6%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E">
+<style>
+:root{--bg:#f4f4f8;--fr:#fff;--cd:#fff;--cd2:#f4f4f8;--tx:#14141c;--mu:#6a6b7a;--ac:#5a3fd0;--acg:linear-gradient(135deg,#7b5cf0,#4d34c4);--bd:#e8e8ef;--sb:#11111a;--sbt:#a9aabb;--sh:0 1px 2px rgba(20,20,40,.05),0 6px 18px rgba(20,20,40,.05);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c0c12;--fr:#13131b;--cd:#191923;--cd2:#101018;--tx:#f2f2f7;--mu:#a2a3b4;--ac:#7c5ee8;--bd:#25252f;--sb:#08080d;--sh:none;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c0c12;--fr:#13131b;--cd:#191923;--cd2:#101018;--tx:#f2f2f7;--mu:#a2a3b4;--ac:#7c5ee8;--bd:#25252f;--sb:#08080d;--sh:none;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--tx);font:14.5px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--fr);z-index:10}
+svg{display:block}a{color:var(--ac)}
+.app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh}
+#nav{background:var(--sb);padding:22px 14px;display:flex;flex-direction:column;position:sticky;top:env(safe-area-inset-top,0px);height:calc(100vh - env(safe-area-inset-top,0px));overflow:auto}
+.logo{display:flex;align-items:center;gap:12px;padding:2px 10px 20px}.lm{width:42px;height:42px;border-radius:13px;background:var(--acg);display:grid;place-items:center;box-shadow:0 8px 20px rgba(90,63,208,.45);flex:none}
+.lt{display:flex;flex-direction:column;line-height:1.05}.wm{font-size:1.32rem;font-weight:800;letter-spacing:-.035em;color:#fff}.wm i{font-style:normal;color:#b9a6ff}.lt small{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:#7d7e92;margin-top:5px}
+.ns,.ng{display:flex;flex-direction:column;gap:2px}.ng{margin-top:auto}.nl{font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:#6f7084;margin:18px 14px 6px}
+.ni{display:flex;gap:12px;align-items:center;width:100%;border:0;background:none;color:var(--sbt);font:inherit;font-size:.9rem;padding:10px 14px;border-radius:12px;cursor:pointer;text-align:left;white-space:nowrap}
+.ni:hover{background:#ffffff12;color:#fff}.ni[aria-current=true]{background:var(--acg);color:#fff;font-weight:600;box-shadow:0 8px 18px rgba(90,63,208,.4)}
+.col{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--fr);display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.srch{position:relative;flex:1;max-width:380px;min-width:140px;color:var(--mu)}.srch svg{position:absolute;left:13px;top:50%;transform:translateY(-50%)}.srch input{padding-left:40px!important}.sp{flex:1}
+.usage{display:flex;gap:8px;align-items:center;font-size:.82rem;color:var(--mu);padding:0 6px}.usage svg{color:#2fb344}
+.ib{width:40px;height:40px;border-radius:12px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);cursor:pointer;display:grid;place-items:center}.av{width:40px;height:40px;border-radius:12px;background:var(--acg);color:#fff;display:grid;place-items:center;font-weight:700}
+.work{display:grid;grid-template-columns:minmax(0,1fr) 340px;flex:1;align-items:start}
+.panel{padding:28px 28px 40px;min-width:0}
+#det{background:var(--fr);border-left:1px solid var(--bd);padding:24px 22px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 65px);max-height:calc(100vh - 65px);overflow:auto;min-height:calc(100vh - 65px)}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px}.hd h1{font-size:1.75rem;margin:2px 0 2px;letter-spacing:-.02em}#bc{font-size:.78rem;color:var(--mu)}#sub{margin:0}.hr2{display:flex;gap:8px;align-items:center}
+.sortl{font-size:.82rem;color:var(--mu);display:flex;align-items:center;gap:6px}.sortl select{width:auto;padding:5px 8px;border:0;background:none;font-weight:600;color:var(--tx)}
+.vb{width:34px;height:34px;border-radius:10px;border:0;background:transparent;color:var(--mu);cursor:pointer}.vb[aria-pressed=true]{background:var(--cd);color:var(--ac);box-shadow:var(--sh)}
+h2{font-size:1.1rem;margin:0 0 2px}h3{font-size:1rem;margin:0 0 8px}h4{margin:20px 0 6px;font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--mu)}.mu,small{color:var(--mu)}.mu{margin:0 0 10px;font-size:.88rem}
+.gh{display:flex;align-items:center;gap:8px;margin:28px 0 12px}.gh:first-child{margin-top:12px}.gh h3{margin:0;font-size:.92rem;text-transform:uppercase;letter-spacing:.07em}.gh span{background:var(--cd);border:1px solid var(--bd);border-radius:99px;padding:0 9px;font-size:.74rem;color:var(--mu)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.tc{background:var(--cd);border:1px solid var(--bd);border-radius:16px;overflow:hidden;cursor:pointer;box-shadow:var(--sh);display:flex;flex-direction:column;transition:border-color .15s}.tc:hover{border-color:color-mix(in srgb,var(--c,var(--ac)) 55%,var(--bd))}.tc.sel{border-color:var(--c,var(--ac));box-shadow:0 0 0 3px color-mix(in srgb,var(--c,var(--ac)) 18%,transparent)}
+.tcb{padding:16px 16px 12px;display:flex;flex-direction:column;gap:2px;position:relative;min-height:132px;flex:1}.tcb b{font-size:.98rem;word-break:break-word}.tcb small{font-size:.76rem;line-height:1.4}
+.ti{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;margin-bottom:14px;color:var(--c,var(--ac));background:color-mix(in srgb,var(--c,var(--ac)) 13%,transparent)}
+.dots{position:absolute;right:8px;top:8px;border:0;background:none;color:var(--mu);font-size:1.1rem;cursor:pointer;padding:4px 8px}
+.tcb img.th{margin:-16px -16px 10px;width:calc(100% + 32px);height:112px;object-fit:cover}
+.tcf{border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;padding:8px 10px 8px 16px;font-size:.8rem;gap:6px}.pl{display:flex;align-items:center;gap:6px;color:var(--mu);font-weight:500}.pd{width:7px;height:7px;border-radius:50%}.act2{display:flex;gap:4px;align-items:center}.star{border:0;background:none;color:var(--ac);cursor:pointer;padding:4px;display:grid}
+.grid.list{grid-template-columns:1fr}.grid.list .tc{flex-direction:row;align-items:center}.grid.list .tcb{min-height:0;flex-direction:row;align-items:center;gap:12px;flex-wrap:wrap}.grid.list .ti{margin:0}.grid.list .tcb img.th{width:64px;height:44px;margin:0;border-radius:8px}.grid.list .tcf{border:0}.grid.list small{flex:1}
+.btn,.pri{background:var(--ac);color:#fff;border:0;border-radius:11px;font:inherit;font-weight:600;padding:9px 18px;cursor:pointer;text-decoration:none;display:inline-flex;gap:8px;align-items:center;justify-content:center}.btn.sm{padding:5px 12px;font-size:.78rem;border-radius:9px}.big{width:100%;padding:12px}
+.ghost,.row button{background:var(--cd);border:1px solid var(--bd);color:var(--tx);border-radius:11px;padding:7px 14px;font:inherit;cursor:pointer;display:inline-flex;gap:6px;align-items:center}button:disabled{opacity:.5;cursor:wait}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:18px;margin-top:14px;box-shadow:var(--sh)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 4px}.tabs button{border:0;background:transparent;color:var(--mu);font:inherit;font-size:.86rem;padding:8px 14px;border-radius:10px;cursor:pointer}.tabs button[aria-current=true]{background:var(--cd);color:var(--ac);font-weight:600;box-shadow:var(--sh)}
+.drop{display:block;border:1.5px dashed color-mix(in srgb,var(--ac) 50%,var(--bd));border-radius:14px;padding:26px 12px;text-align:center;cursor:pointer;color:var(--mu);background:color-mix(in srgb,var(--ac) 4%,transparent)}.drop.on{background:color-mix(in srgb,var(--ac) 12%,transparent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.chips span{background:var(--cd2);border-radius:8px;padding:2px 9px;font-size:.8rem}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:14px 0}.opts label{display:flex;flex-direction:column;font-size:.76rem;color:var(--mu);gap:4px;font-weight:500}
+select,textarea,input:not([type=file],[type=range],[type=checkbox]){font:inherit;padding:9px 11px;border-radius:11px;border:1px solid var(--bd);background:var(--cd2);color:var(--tx);width:100%}textarea{min-height:110px}
+select:focus,textarea:focus,input:focus{outline:2px solid color-mix(in srgb,var(--ac) 55%,transparent);outline-offset:1px}
+.act{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.chk{display:flex;gap:8px;align-items:flex-start;font-size:.84rem;margin:10px 0}
+.pg{height:4px;background:var(--bd);border-radius:9px;margin:14px 0 6px;overflow:hidden}.pg i{display:block;height:100%;width:0;background:var(--ac);transition:width .2s}.st{min-height:1.3em;font-size:.84rem;color:var(--mu);margin:0;word-break:break-word}
+.row,.hr{display:flex;align-items:center;gap:10px;padding:8px 10px;margin-top:6px;background:var(--cd2);border-radius:12px;flex-wrap:wrap;cursor:pointer}.hr{flex-wrap:nowrap;cursor:default}.hr span:last-child{min-width:0;display:flex;flex-direction:column;word-break:break-all;font-size:.82rem}
+.row img,.row video{max-height:44px;max-width:72px;border-radius:6px}.row audio{height:30px;max-width:170px}.nm{flex:1;min-width:100px;word-break:break-all;font-size:.84rem}
+.bd{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:28px;padding:0 6px;border-radius:8px;color:#fff;font-size:.66rem;font-weight:700;flex:none}
+.dpv{border-radius:20px;overflow:hidden;height:190px;display:grid;place-items:center;background:var(--acg);color:#fff}.dpv img,.dpv video{width:100%;height:100%;object-fit:cover}.dpv audio{width:90%}
+.dact{display:flex;gap:8px;margin:14px 0}.ib2{width:42px;height:42px;border-radius:12px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);cursor:pointer;display:grid;place-items:center}.ib2:hover{border-color:var(--ac);color:var(--ac)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}.tags span{background:var(--cd2);padding:4px 10px;border-radius:8px;font-size:.78rem;font-weight:500}
+.info .ir{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:.86rem;border-bottom:1px solid var(--bd)}.info .ir:last-child{border:0}.info b{text-align:right;font-weight:600}
+.sendto{display:flex;gap:8px;flex-wrap:wrap}.sendto button{width:42px;height:42px;border-radius:12px;border:1px solid var(--bd);background:var(--cd);color:var(--ac);cursor:pointer;display:grid;place-items:center}
+.dbar{display:flex;gap:8px;flex-wrap:wrap}.dbar input{flex:1;min-width:200px}
+.cmd{background:var(--cd2);border-radius:12px;padding:10px;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all;margin:10px 0}
+.tr{display:inline-block;border-radius:99px;padding:1px 10px;font-size:.72rem;font-weight:600;color:#1a1a1a}.t-open{background:#c9f46a}.t-free{background:#d8e6ff}.t-platform{background:#ffd98a}.t-drm{background:#ffb4b4}
+.srv{background:var(--cd2);border-radius:14px;padding:12px;margin-bottom:12px}.srvh{display:flex;align-items:center;gap:8px}.srvh b{flex:1;font-size:.88rem;word-break:break-all}.dot{width:10px;height:10px;border-radius:50%;background:#e0a100;flex:none}.dot.on{background:#2fb344}.ghost.sm,.btn.sm{padding:5px 12px;font-size:.78rem}.cmdrow{display:flex;gap:8px;align-items:center;margin:6px 0}.cmdrow code{flex:1;background:var(--cd);border-radius:10px;padding:7px 10px;font:12px ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
+.dinfo{display:flex;gap:12px;margin-top:10px;align-items:center}.dinfo img{width:120px;border-radius:12px}
+@media (max-width:1180px){.work{grid-template-columns:minmax(0,1fr)}#det{position:static;border-left:0;border-top:1px solid var(--bd);min-height:0;max-height:none}}
+@media (max-width:820px){.app{grid-template-columns:minmax(0,1fr)}#nav{position:static;height:auto;flex-direction:row;overflow-x:auto;padding:10px;gap:4px}.logo,.nl{display:none}.ns,.ng{flex-direction:row;margin:0}.top{position:static}.panel{padding:16px}.usage{display:none}}
+</style>
+<script src="./vendor/jszip.min.js"></script>
+<script src="./vendor/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
+<script src="./vendor/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
+</head><body><div class="app">
+<noscript><p style="padding:2rem;font:16px system-ui">DoneKwik needs JavaScript. Please turn it on to convert, edit and download files.</p></noscript>
+<nav id="nav" aria-label="Main menu"></nav>
+<div class="col">
+<header class="top"><button class="btn" id="addf"><span data-i="plus" data-s="16"></span>Add file</button><input type="file" multiple hidden id="af">
+<label class="srch"><span data-i="search" data-s="16"></span><input id="gs" placeholder="Search tools, or paste a link" aria-label="Search tools, or paste a link"></label><span class="sp"></span>
+<div class="usage" title="Converters and editors never upload your files"><span data-i="lock" data-s="15"></span><span id="us">0 B uploaded</span></div>
+<button class="ib" id="theme" aria-label="Switch between light and dark theme" title="Switch theme"></button><span class="av" title="Guest">G</span></header>
+<div class="work"><main id="main" class="panel">
+<div class="hd" id="hd"><div><div id="bc"></div><h1 id="ttl"></h1><p id="sub" class="mu"></p></div><div class="hr2"><button class="ghost" id="back">‹ Back</button><span id="vt" class="hr2"><label class="sortl">Sort by <select id="sort"><option value="type">Type<option value="name">Name<option value="fav">Favorites</select></label><button class="vb" id="vg" aria-label="Grid view" aria-pressed="true" data-i="grid" data-s="17"></button><button class="vb" id="vl" aria-label="List view" aria-pressed="false" data-i="list" data-s="17"></button></span></div></div>
+<div id="home"><label class="drop" id="hdrop" style="padding:16px"><input type="file" multiple hidden id="hf"><b>Drop files here</b> to find the right tool <small>(or tap to choose)</small></label><div id="sg"></div>
+<div id="hgrid"></div><p class="mu" style="margin-top:22px">Converters and editors run in your browser and never upload your files. Video and audio re-encoding runs in real time, so keep the tab open.</p></div>
+<section id="hv" hidden><div class="card" style="margin-top:0"><div id="hist"></div><button class="ghost" id="hc" style="margin-top:10px">Clear history</button></div></section>
+</main><aside id="det" aria-live="polite"></aside></div></div></div>
+<script>
+let API='';try{API=(localStorage.getItem('dk-api')||'').replace(/\/+$/,'')}catch(e){}
+const $=(s,r=document)=>r.querySelector(s),fmt=n=>n>1e6?(n/1e6).toFixed(1)+' MB':Math.max(1,Math.round(n/1e3))+' KB',ext=f=>(f.name.split('.').pop()||'').toLowerCase(),base=f=>f.name.replace(/\.[^.]+$/,''),P=(n,l=2)=>String(n).padStart(l,'0'),need=(v,n)=>{if(!v)throw new Error(n+' did not load. Check your connection.')};
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+let dl=null,srv=false;try{window.claude&&claude.use('downloads').then(d=>dl=d).catch(()=>{})}catch(e){}
+
+async function save(name,blob){
+ if(dl){try{await dl.save({filename:name,data:blob});return}catch(e){if(e.code==='declined')return;
+  if(e.code==='rejected_extension'){const z=new JSZip();z.file(name,blob);await dl.save({filename:name+'.zip',data:await z.generateAsync({type:'blob'})});return}throw e}}
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),6000)}
+const badge=e=>{const s=document.createElement('span');s.className='bd';s.textContent=(e||'file').slice(0,4).toUpperCase();s.style.background='hsl('+[...e].reduce((a,c)=>a+c.charCodeAt(0)*47,0)%360+' 62% 42%)';return s};
+let H=[];try{H=JSON.parse(localStorage.getItem('dk-h')||'[]')}catch(e){}
+const store=()=>{try{localStorage.setItem('dk-h',JSON.stringify(H))}catch(e){}};
+function drawH(){const b=$('#hist');b.innerHTML='';if(!H.length){b.innerHTML='<p class="mu">Nothing yet.</p>';return}
+ H.forEach(h=>{const r=document.createElement('div');r.className='hr';const s=document.createElement('span');s.innerHTML='<b></b><small></small>';s.children[0].textContent=h.n;s.children[1].textContent=h.tool+' · '+fmt(h.sz)+' · '+new Date(h.t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});r.append(badge(h.n.split('.').pop()),s);b.append(r)})}
+const hist=(n,tool,sz)=>{H.unshift({n,tool,sz,t:Date.now()});H=H.slice(0,12);store();drawH()};
+$('#hc').onclick=()=>{H=[];store();drawH()};
+/* helpers */
+const toB=(c,t,q)=>new Promise(r=>c.toBlob(r,t,q)),mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+const cv=(s,w,h,bg)=>{const c=mk(w,h),x=c.getContext('2d');if(bg){x.fillStyle='#fff';x.fillRect(0,0,w,h)}x.drawImage(s,0,0,w,h);return c};
+async function loadImg(f){if(/heic|heif/i.test(f.type+f.name)){need(window.heic2any,'HEIC decoder');f=[].concat(await heic2any({blob:f,toType:'image/png'}))[0]}
+ const i=new Image();i.src=URL.createObjectURL(f);try{await i.decode()}catch(e){throw new Error('Cannot read '+(f.name||'this image'))}return i}
+const bmp=c=>{const w=c.width,h=c.height,x=c.getContext('2d').getImageData(0,0,w,h).data,rs=(w*3+3)&~3,d=new DataView(new ArrayBuffer(54+rs*h));d.setUint16(0,0x4d42,true);d.setUint32(2,54+rs*h,true);d.setUint32(10,54,true);d.setUint32(14,40,true);d.setInt32(18,w,true);d.setInt32(22,h,true);d.setUint16(26,1,true);d.setUint16(28,24,true);d.setUint32(34,rs*h,true);
+ for(let y=0;y<h;y++)for(let i=0;i<w;i++){const s=((h-1-y)*w+i)*4,o=54+y*rs+i*3;d.setUint8(o,x[s+2]);d.setUint8(o+1,x[s+1]);d.setUint8(o+2,x[s])}return new Blob([d],{type:'image/bmp'})};
+const ico=async c=>{const p=new Uint8Array(await(await toB(c,'image/png')).arrayBuffer()),d=new DataView(new ArrayBuffer(22));d.setUint16(2,1,true);d.setUint16(4,1,true);d.setUint8(6,c.width>255?0:c.width);d.setUint8(7,c.height>255?0:c.height);d.setUint16(10,1,true);d.setUint16(12,32,true);d.setUint32(14,p.length,true);d.setUint32(18,22,true);return new Blob([d,p],{type:'image/x-icon'})};
+function wav(b){const n=b.length,c=b.numberOfChannels,d=new DataView(new ArrayBuffer(44+n*c*2)),w=(o,s)=>[...s].forEach((ch,i)=>d.setUint8(o+i,ch.charCodeAt(0)));
+ w(0,'RIFF');d.setUint32(4,36+n*c*2,true);w(8,'WAVEfmt ');d.setUint32(16,16,true);d.setUint16(20,1,true);d.setUint16(22,c,true);d.setUint32(24,b.sampleRate,true);d.setUint32(28,b.sampleRate*c*2,true);d.setUint16(32,c*2,true);d.setUint16(34,16,true);w(36,'data');d.setUint32(40,n*c*2,true);
+ const ch=[...Array(c)].map((_,i)=>b.getChannelData(i));let o=44;for(let i=0;i<n;i++)for(let k=0;k<c;k++){const v=Math.max(-1,Math.min(1,ch[k][i]));d.setInt16(o,v<0?v*32768:v*32767,true);o+=2}return new Blob([d],{type:'audio/wav'})}
+function mp3(b,kbps){const c=b.numberOfChannels,E=new lamejs.Mp3Encoder(c,b.sampleRate,kbps),i16=a=>Int16Array.from(a,v=>Math.max(-1,Math.min(1,v))*32767),L=i16(b.getChannelData(0)),R=c>1?i16(b.getChannelData(1)):null,p=[];
+ for(let i=0;i<L.length;i+=1152){const x=E.encodeBuffer(L.subarray(i,i+1152),R?R.subarray(i,i+1152):undefined);if(x.length)p.push(x)}p.push(E.flush());return new Blob(p,{type:'audio/mpeg'})}
+const T=s=>{const m=s.trim().match(/(?:(\d+):)?(\d+):(\d+)[,.](\d+)/);return m?(+(m[1]||0)*3600+ +m[2]*60+ +m[3])*1000+ +m[4].padEnd(3,'0').slice(0,3):0};
+const parse=(t,sh)=>t.replace(/\r/g,'').replace(/^\uFEFF/,'').split(/\n{2,}/).map(b=>{const l=b.split('\n'),i=l.findIndex(x=>x.includes('-->'));if(i<0)return null;const[a,c]=l[i].split('-->');return{a:Math.max(0,T(a)+sh),b:Math.max(0,T(c)+sh),t:l.slice(i+1).join('\n')}}).filter(Boolean);
+const ts=(ms,s)=>`${P(ms/36e5|0)}:${P(ms/6e4%60|0)}:${P(ms/1e3%60|0)}${s}${P(ms%1000,3)}`;
+const build=(c,k)=>k==='txt'?c.map(x=>x.t.replace(/<[^>]+>/g,'')).join('\n'):(k==='vtt'?'WEBVTT\n\n':'')+c.map((x,i)=>(k==='srt'?i+1+'\n':'')+ts(x.a,k==='srt'?',':'.')+' --> '+ts(x.b,k==='srt'?',':'.')+'\n'+x.t).join('\n\n')+'\n';
+const bl=async d=>new Blob([await d.save()],{type:'application/pdf'});
+function range(s,n){const o=[];(s||'').split(',').forEach(p=>{const[a,b]=p.split('-').map(x=>parseInt(x));if(a)for(let i=a;i<=(b||a);i++)if(i>=1&&i<=n)o.push(i-1)});return o}
+/* ===== Data engines (native code, no third-party spreadsheet or Word libraries) ===== */
+const xe=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])).replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g,'');
+const colName=i=>{let s='';for(i++;i>0;i=Math.floor((i-1)/26))s=String.fromCharCode(65+(i-1)%26)+s;return s};
+const colIdx=r=>{let n=0;for(const ch of r.replace(/[^A-Za-z]/g,''))n=n*26+ch.toUpperCase().charCodeAt(0)-64;return n-1};
+function csvParse(t,d=','){t=t.replace(/^\uFEFF/,'');const rows=[];let r=[],c='',q=false;
+ for(let i=0;i<t.length;i++){const ch=t[i];
+  if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}
+  else if(ch==='"'&&c==='')q=true;else if(ch===d){r.push(c);c=''}
+  else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(c);rows.push(r);r=[];c=''}else c+=ch}
+ if(c!==''||r.length){r.push(c);rows.push(r)}return rows}
+const cellStr=c=>c==null?'':c instanceof Date?c.toISOString():String(c);
+const csvOut=(rows,d=',')=>rows.map(r=>r.map(c=>{c=cellStr(c);return c.includes(d)||/["\n\r]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(d)).join('\n')+'\n';
+const infer=v=>{if(typeof v!=='string')return v;const s=v.trim();return /^-?(0|[1-9]\d{0,14})(\.\d+)?([eE][-+]?\d+)?$/.test(s)?+s:v};
+const typed=rows=>rows.map(r=>r.map(infer));
+function toObjs(rows){if(!rows.length)return[];const seen={},keys=rows[0].map((h,i)=>{h=String(h==null||h===''?'col'+(i+1):h);let k=h,n=1;while(seen[k])k=h+'_'+ ++n;seen[k]=1;return k});
+ return rows.slice(1).map(r=>Object.fromEntries(keys.map((k,i)=>[k,r[i]===undefined?'':r[i]])))}
+function fromJson(j){if(Array.isArray(j)){if(!j.length)return[];if(j.every(x=>Array.isArray(x)))return j.map(r=>r.map(v=>v&&typeof v==='object'?JSON.stringify(v):v));
+  const keys=[];j.forEach(o=>Object.keys(o&&typeof o==='object'?o:{value:o}).forEach(k=>keys.includes(k)||keys.push(k)));
+  return[keys,...j.map(o=>{o=o&&typeof o==='object'?o:{value:o};return keys.map(k=>o[k]&&typeof o[k]==='object'?JSON.stringify(o[k]):o[k]===undefined?'':o[k])})]}
+ if(j&&typeof j==='object')return fromJson([j]);throw new Error('JSON must be an array or an object')}
+const isoDate=n=>{const d=new Date(Math.round((n-25569)*864e5)),p=x=>String(x).padStart(2,'0'),s=d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate());return Number.isInteger(n)?s:s+' '+p(d.getUTCHours())+':'+p(d.getUTCMinutes())+':'+p(d.getUTCSeconds())};
+const dense=rows=>{const o=Array.from(rows,r=>Array.from(r||[],v=>v==null?'':v));while(o.length&&o[o.length-1].every(v=>v===''))o.pop();return o};
+const xmlDoc=s=>{const d=new DOMParser().parseFromString(s,'application/xml');if(d.getElementsByTagName('parsererror').length)throw new Error('The file contains invalid XML');return d};
+async function readXlsx(ab){const z=await JSZip.loadAsync(ab),X=async p=>{const f=z.file(p);return f?xmlDoc(await f.async('string')):null},wb=await X('xl/workbook.xml');if(!wb)throw new Error('Not a valid XLSX file');
+ const RN='http://schemas.openxmlformats.org/officeDocument/2006/relationships',rel=await X('xl/_rels/workbook.xml.rels'),rm={};
+ rel&&[...rel.getElementsByTagNameNS('*','Relationship')].forEach(r=>rm[r.getAttribute('Id')]=r.getAttribute('Target'));
+ const ss=[],sx=await X('xl/sharedStrings.xml');sx&&[...sx.getElementsByTagNameNS('*','si')].forEach(si=>ss.push([...si.getElementsByTagNameNS('*','t')].filter(t=>t.parentNode.localName!=='rPh').map(t=>t.textContent).join('')));
+ const st=await X('xl/styles.xml'),dx=new Set(),wp=wb.getElementsByTagNameNS('*','workbookPr')[0],b1904=!!wp&&wp.getAttribute('date1904')==='1';
+ if(st){const nf={};[...st.getElementsByTagNameNS('*','numFmt')].forEach(n=>nf[n.getAttribute('numFmtId')]=n.getAttribute('formatCode'));const xf=st.getElementsByTagNameNS('*','cellXfs')[0];
+  xf&&[...xf.children].forEach((x,i)=>{const id=+x.getAttribute('numFmtId'),c=nf[id];if((id>=14&&id<=22)||(id>=45&&id<=47)||(c&&/[ymdhs]/i.test(c.replace(/"[^"]*"|\[[^\]]*\]|\\./g,''))))dx.add(i)})}
+ const sheets=[];
+ for(const s of wb.getElementsByTagNameNS('*','sheet')){let tg=rm[s.getAttributeNS(RN,'id')||s.getAttribute('r:id')]||'';tg=tg.replace(/^\//,'');const sd=await X(tg.startsWith('xl/')?tg:'xl/'+tg);if(!sd)continue;const rows=[];
+  for(const row of sd.getElementsByTagNameNS('*','row')){const ri=+(row.getAttribute('r')||rows.length+1)-1,o=rows[ri]=rows[ri]||[];let ci=0;
+   for(const c of row.children){if(c.localName!=='c')continue;const ref=c.getAttribute('r');if(ref)ci=colIdx(ref);const t=c.getAttribute('t'),v=c.getElementsByTagNameNS('*','v')[0],vt=v?v.textContent:'';let val='';
+    if(t==='s')val=ss[+vt]??'';else if(t==='inlineStr')val=[...c.getElementsByTagNameNS('*','t')].map(x=>x.textContent).join('');else if(t==='b')val=vt==='1';else if(t==='str'||t==='e'||t==='d')val=vt;
+    else if(vt!==''){val=+vt;if(dx.has(+c.getAttribute('s')))val=isoDate(b1904?val-1462:val)}
+    o[ci++]=val}}
+  sheets.push({name:s.getAttribute('name'),rows:dense(rows)})}
+ return{sheets}}
+async function readOds(ab){const z=await JSZip.loadAsync(ab),f=z.file('content.xml');if(!f)throw new Error('Not a valid ODS file');const d=xmlDoc(await f.async('string')),
+ T='urn:oasis:names:tc:opendocument:xmlns:table:1.0',O='urn:oasis:names:tc:opendocument:xmlns:office:1.0',X='urn:oasis:names:tc:opendocument:xmlns:text:1.0',sheets=[];
+ for(const tb of d.getElementsByTagNameNS(T,'table')){const rows=[];
+  for(const tr of tb.getElementsByTagNameNS(T,'table-row')){const rep=Math.min(+tr.getAttributeNS(T,'number-rows-repeated')||1,1000),row=[];
+   for(const c of tr.children){if(c.namespaceURI!==T||!/^(table-cell|covered-table-cell)$/.test(c.localName))continue;const cr=Math.min(+c.getAttributeNS(T,'number-columns-repeated')||1,1000),vt=c.getAttributeNS(O,'value-type');let v='';
+    if(/^(float|percentage|currency)$/.test(vt))v=+c.getAttributeNS(O,'value');else if(vt==='boolean')v=c.getAttributeNS(O,'boolean-value')==='true';else if(vt==='date')v=c.getAttributeNS(O,'date-value');else if(vt==='time')v=c.getAttributeNS(O,'time-value');
+    else if(vt==='string')v=c.getAttributeNS(O,'string-value')||[...c.getElementsByTagNameNS(X,'p')].map(p=>p.textContent).join('\n');
+    for(let i=0;i<cr;i++)row.push(v)}
+   while(row.length&&row[row.length-1]==='')row.pop();for(let i=0;i<rep;i++)rows.push(row.slice())}
+  sheets.push({name:tb.getAttributeNS(T,'name'),rows:dense(rows)})}
+ return{sheets}}
+function readHtmlTables(t){const d=new DOMParser().parseFromString(t,'text/html');return{text:true,sheets:[...d.querySelectorAll('table')].map((tb,i)=>({name:'Table'+(i+1),rows:[...tb.querySelectorAll('tr')].map(tr=>[...tr.children].filter(c=>/^t[dh]$/i.test(c.tagName)).map(c=>c.textContent.trim()))}))}}
+async function readBook(f){const e=ext(f);
+ if(e==='xlsx')return readXlsx(await f.arrayBuffer());if(e==='ods')return readOds(await f.arrayBuffer());
+ const t=await f.text();if(e==='json')return{sheets:[{name:'Sheet1',rows:fromJson(JSON.parse(t.replace(/^\uFEFF/,'')))}]};
+ if(e==='html'||e==='htm'){const b=readHtmlTables(t);if(!b.sheets.length)throw new Error(f.name+': no tables found');return b}
+ const tsv=e==='tsv'||(e==='txt'&&t.includes('\t'));return{text:true,sheets:[{name:'Sheet1',rows:csvParse(t,tsv?'\t':',')}]}}
+const sheetName=(n,i,used)=>{n=String(n||'Sheet'+(i+1)).replace(/[\[\]:*?\/\\]/g,'_').slice(0,31)||'Sheet'+(i+1);let u=n,k=2;while(used.has(u.toLowerCase()))u=n.slice(0,28)+'_'+k++;used.add(u.toLowerCase());return u};
+const XH='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+async function writeXlsx(wb){const z=new JSZip(),used=new Set(),names=wb.sheets.map((s,i)=>sheetName(s.name,i,used)),NS='http://schemas.openxmlformats.org/spreadsheetml/2006/main',RT='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+ z.file('[Content_Types].xml',XH+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+names.map((_,i)=>'<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join('')+'</Types>');
+ z.file('_rels/.rels',XH+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="'+RT+'/officeDocument" Target="xl/workbook.xml"/></Relationships>');
+ z.file('xl/workbook.xml',XH+'<workbook xmlns="'+NS+'" xmlns:r="'+RT+'"><sheets>'+names.map((n,i)=>'<sheet name="'+xe(n)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>').join('')+'</sheets></workbook>');
+ z.file('xl/_rels/workbook.xml.rels',XH+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+names.map((_,i)=>'<Relationship Id="rId'+(i+1)+'" Type="'+RT+'/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>').join('')+'<Relationship Id="rId'+(names.length+1)+'" Type="'+RT+'/styles" Target="styles.xml"/></Relationships>');
+ z.file('xl/styles.xml',XH+'<styleSheet xmlns="'+NS+'"><fonts count="1"><font><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/></cellXfs></styleSheet>');
+ wb.sheets.forEach((s,i)=>z.file('xl/worksheets/sheet'+(i+1)+'.xml',XH+'<worksheet xmlns="'+NS+'"><sheetData>'+s.rows.map((r,ri)=>'<row r="'+(ri+1)+'">'+r.map((c,ci)=>{const ref=colName(ci)+(ri+1);
+  if(c===''||c==null)return'';if(typeof c==='number'&&isFinite(c))return'<c r="'+ref+'"><v>'+c+'</v></c>';if(typeof c==='boolean')return'<c r="'+ref+'" t="b"><v>'+(c?1:0)+'</v></c>';
+  return'<c r="'+ref+'" t="inlineStr"><is><t xml:space="preserve">'+xe(cellStr(c))+'</t></is></c>'}).join('')+'</row>').join('')+'</sheetData></worksheet>'));
+ return z.generateAsync({type:'blob',compression:'DEFLATE',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})}
+async function writeOds(wb){const z=new JSZip(),used=new Set(),M='application/vnd.oasis.opendocument.spreadsheet';
+ z.file('mimetype',M,{compression:'STORE'});
+ z.file('META-INF/manifest.xml',XH+'<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.2"><manifest:file-entry manifest:full-path="/" manifest:media-type="'+M+'"/><manifest:file-entry manifest:full-path="content.xml" manifest:media-type="text/xml"/></manifest:manifest>');
+ z.file('content.xml',XH+'<office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" office:version="1.2"><office:body><office:spreadsheet>'+
+  wb.sheets.map((s,i)=>'<table:table table:name="'+xe(sheetName(s.name,i,used))+'">'+s.rows.map(r=>'<table:table-row>'+r.map(c=>c===''||c==null?'<table:table-cell/>':typeof c==='number'&&isFinite(c)?'<table:table-cell office:value-type="float" office:value="'+c+'"><text:p>'+c+'</text:p></table:table-cell>':typeof c==='boolean'?'<table:table-cell office:value-type="boolean" office:boolean-value="'+c+'"><text:p>'+String(c).toUpperCase()+'</text:p></table:table-cell>':'<table:table-cell office:value-type="string"><text:p>'+xe(cellStr(c))+'</text:p></table:table-cell>').join('')+'</table:table-row>').join('')+'</table:table>').join('')+'</office:spreadsheet></office:body></office:document-content>');
+ return z.generateAsync({type:'blob',mimeType:M,compression:'DEFLATE'})}
+const sheetText=(rows,k)=>k==='csv'?csvOut(rows):k==='tsv'?csvOut(rows,'\t'):k==='json'?JSON.stringify(toObjs(rows),null,2)+'\n':k==='html'?'<!doctype html>\n<meta charset="utf-8">\n<table border="1" cellspacing="0" cellpadding="4">\n'+rows.map((r,i)=>'<tr>'+r.map(c=>'<'+(i?'td':'th')+'>'+xe(cellStr(c))+'</'+(i?'td':'th')+'>').join('')+'</tr>').join('\n')+'\n</table>\n':rows.map(r=>r.map(cellStr).join('\t')).join('\n')+'\n';
+/* ===== DOCX reader (native) ===== */
+async function readDocx(ab){const z=await JSZip.loadAsync(ab),df=z.file('word/document.xml');if(!df)throw new Error('Not a valid DOCX file');
+ const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main',R='http://schemas.openxmlformats.org/officeDocument/2006/relationships',doc=xmlDoc(await df.async('string')),rels={},num={},rf=z.file('word/_rels/document.xml.rels'),nf=z.file('word/numbering.xml');
+ if(rf)[...xmlDoc(await rf.async('string')).getElementsByTagNameNS('*','Relationship')].forEach(r=>rels[r.getAttribute('Id')]=r.getAttribute('Target'));
+ if(nf){const nd=xmlDoc(await nf.async('string')),abs={};[...nd.getElementsByTagNameNS(W,'abstractNum')].forEach(a=>{const l=[...a.getElementsByTagNameNS(W,'lvl')].find(l=>l.getAttributeNS(W,'ilvl')==='0'),f=l&&l.getElementsByTagNameNS(W,'numFmt')[0];abs[a.getAttributeNS(W,'abstractNumId')]=f?f.getAttributeNS(W,'val'):'decimal'});
+  [...nd.getElementsByTagNameNS(W,'num')].forEach(n=>{const a=n.getElementsByTagNameNS(W,'abstractNumId')[0];num[n.getAttributeNS(W,'numId')]=a?abs[a.getAttributeNS(W,'val')]:'decimal'})}
+ const kid=(e,n)=>e&&[...e.children].find(x=>x.localName===n),on=e=>e&&e.getAttributeNS(W,'val')!=='0'&&e.getAttributeNS(W,'val')!=='false';
+ const sNum={},stf=z.file('word/styles.xml');
+ if(stf){const sd=xmlDoc(await stf.async('string')),by={},bo={};[...sd.getElementsByTagNameNS(W,'style')].forEach(s=>{const id=s.getAttributeNS(W,'styleId'),pp=kid(s,'pPr'),np=pp&&kid(pp,'numPr'),ni=np&&kid(np,'numId'),b=kid(s,'basedOn');by[id]=ni?ni.getAttributeNS(W,'val'):null;bo[id]=b?b.getAttributeNS(W,'val'):null});
+  const res=id=>{for(let i=0;id&&i<10;i++){if(by[id])return by[id];id=bo[id]}return null};Object.keys(by).forEach(id=>sNum[id]=res(id))}
+ function inline(p){let h='',t='';for(const c of p.children){
+   if(c.localName==='r'){const rp=kid(c,'rPr');let rh='',rt='';for(const x of c.children){if(x.localName==='t'){rh+=esc(x.textContent);rt+=x.textContent}else if(x.localName==='tab'){rh+='&emsp;';rt+='\t'}else if(x.localName==='br'||x.localName==='cr'){rh+='<br>';rt+='\n'}}
+    if(on(kid(rp,'b')))rh='<strong>'+rh+'</strong>';if(on(kid(rp,'i')))rh='<em>'+rh+'</em>';if(kid(rp,'u')&&kid(rp,'u').getAttributeNS(W,'val')!=='none')rh='<u>'+rh+'</u>';if(on(kid(rp,'strike')))rh='<s>'+rh+'</s>';h+=rh;t+=rt}
+   else if(c.localName==='hyperlink'){const i=inline(c),to=rels[c.getAttributeNS(R,'id')];h+=to&&/^https?:|^mailto:/i.test(to)?'<a href="'+xe(to)+'">'+i.h+'</a>':i.h;t+=i.t}
+   else if(/^(ins|smartTag|sdt|sdtContent|fldSimple)$/.test(c.localName)){const i=inline(c);h+=i.h;t+=i.t}}return{h,t}}
+ const body=doc.getElementsByTagNameNS(W,'body')[0];if(!body)throw new Error('The document has no body');let H='',T='',list=null,cnt=0;
+ const closeList=()=>{if(list){H+='</'+list+'>';list=null}};
+ function para(p){const pp=kid(p,'pPr'),ps=kid(pp,'pStyle'),sty=ps?ps.getAttributeNS(W,'val'):'',np=kid(pp,'numPr'),nid=np&&kid(np,'numId')?kid(np,'numId').getAttributeNS(W,'val'):(sNum[sty]||'0'),i=inline(p);
+  if(nid&&nid!=='0'){const ty=num[nid]==='bullet'?'ul':'ol';if(list!==ty){closeList();H+='<'+ty+'>';list=ty;cnt=0}H+='<li>'+i.h+'</li>';T+=(ty==='ul'?'- ':(++cnt)+'. ')+i.t+'\n';return}
+  closeList();const m=/^(?:Heading|heading)\s?(\d)$/.exec(sty),lv=m?Math.min(+m[1],6):/^Title$/i.test(sty)?1:0;
+  if(!i.t.trim()&&!i.h.includes('<br>')){T+='\n';return}H+=lv?'<h'+lv+'>'+i.h+'</h'+lv+'>':'<p>'+i.h+'</p>';T+=i.t+'\n'}
+ function walk(el){for(const c of el.children){if(c.localName==='p')para(c);else if(c.localName==='tbl'){closeList();H+='<table border="1" cellspacing="0" cellpadding="4">';
+   for(const tr of c.children){if(tr.localName!=='tr')continue;H+='<tr>';const cells=[];for(const tc of tr.children){if(tc.localName!=='tc')continue;let ch='',ct='';for(const p of tc.children){if(p.localName==='p'){const i=inline(p);ch+=(ch?'<br>':'')+i.h;ct+=(ct?' ':'')+i.t}}H+='<td>'+ch+'</td>';cells.push(ct)}H+='</tr>';T+=cells.join('\t')+'\n'}H+='</table>'}
+  else if(c.localName==='sdt'){const sc=kid(c,'sdtContent');sc&&walk(sc)}}}
+ walk(body);closeList();return{html:H,text:T.replace(/\n{3,}/g,'\n\n').trim()+'\n'}}
+/* ===== Text to PDF (Latin text stays selectable; other scripts are drawn so Devanagari, Arabic, CJK and more work) ===== */
+async function t2pdf(tx){const D=PDFLib.PDFDocument,A4=[595.28,841.89];tx=tx.replace(/\r/g,'').replace(/\t/g,'    ');
+ if(!/[^\n\x20-\x7e\xa0-\xff]/.test(tx)){const d=await D.create(),F=await d.embedFont(PDFLib.StandardFonts.Helvetica),M=50,sz=11,lh=sz*1.4;let p=d.addPage(A4),y=A4[1]-M;
+  const line=l=>{if(y-lh<M){p=d.addPage(A4);y=A4[1]-M}y-=lh;if(l)p.drawText(l,{x:M,y,size:sz,font:F})};
+  for(const ln of tx.split('\n')){let l='';for(const w of ln.split(' ')){const t=l?l+' '+w:w;if(F.widthOfTextAtSize(t,sz)>A4[0]-2*M&&l){line(l);l=w}else l=t}line(l)}return bl(d)}
+ const S=2,PW=Math.round(A4[0]*S),PH=Math.round(A4[1]*S),M=50*S,fs=11.5*S,lh=fs*1.55,mw=PW-2*M,d=await D.create(),
+  cvs=document.createElement('canvas');cvs.width=PW;cvs.height=PH;const x=cvs.getContext('2d');x.font=fs+'px "Noto Sans","Noto Sans Devanagari","Nirmala UI","Segoe UI",Mangal,Arial,"Noto Sans CJK SC",system-ui,sans-serif';
+ const lines=[];for(const ln of tx.split('\n')){if(!ln){lines.push('');continue}let l='';const toks=ln.split(/(\s+)/);
+  for(const w of toks){if(x.measureText(l+w).width<=mw){l+=w;continue}if(l.trim())lines.push(l.trimEnd());l=w.trimStart();
+   while(x.measureText(l).width>mw){let k=l.length;while(k>1&&x.measureText(l.slice(0,k)).width>mw)k--;lines.push(l.slice(0,k));l=l.slice(k)}}lines.push(l)}
+ const per=Math.max(1,Math.floor((PH-2*M)/lh));
+ for(let i=0;i<lines.length||i===0;i+=per){x.fillStyle='#fff';x.fillRect(0,0,PW,PH);x.fillStyle='#111';x.textBaseline='top';x.font=fs+'px "Noto Sans","Noto Sans Devanagari","Nirmala UI","Segoe UI",Mangal,Arial,"Noto Sans CJK SC",system-ui,sans-serif';
+  lines.slice(i,i+per).forEach((l,j)=>x.fillText(l,M,M+j*lh));const im=await d.embedPng(await(await toB(cvs,'image/png')).arrayBuffer());d.addPage(A4).drawImage(im,{x:0,y:0,width:A4[0],height:A4[1]})}
+ return bl(d)}
+/* PDF reader (pdf.js, loaded on demand) */
+const PJS='./vendor/pdf.min.mjs',PJW='./vendor/pdf.worker.min.mjs';
+async function pdfjs(){if(window.__pdfjs)return window.__pdfjs;let m;try{m=await import(PJS)}catch(e){throw new Error('The PDF reader could not load. Check your connection and use a recent browser.')}m.GlobalWorkerOptions.workerSrc=PJW;return window.__pdfjs=m}
+
+/* Chrome's MediaRecorder writes WebM without a duration, which breaks seeking in players. This adds the Duration element. */
+async function fixWebm(blob,sec){try{const b=new Uint8Array(await blob.slice(0,8192).arrayBuffer());
+ const vl=i=>{let l=1;while(l<8&&!(b[i]&(0x80>>(l-1))))l++;return l},vs=i=>{const l=vl(i);let v=b[i]&(0xFF>>l);for(let k=1;k<l;k++)v=v*256+b[i+k];return[v,l]},id=i=>{const l=vl(i);return[[...b.subarray(i,i+l)].map(x=>x.toString(16).padStart(2,'0')).join(''),l]};
+ let[e,il]=id(0);if(e!=='1a45dfa3')return blob;let[sz,sl]=vs(il),i=il+sl+sz;[e,il]=id(i);if(e!=='18538067')return blob;i+=il+vs(i+il)[1];
+ for(let n=0;n<40&&i<8000;n++){[e,il]=id(i);const[s2,l2]=vs(i+il);if(e==='1f43b675')return blob;
+  if(e==='1549a966'){const st=i+il+l2,en=st+s2;let tc=1e6,j=st,has=false;
+   while(j<en){const[c,cl]=id(j),[cs,cll]=vs(j+cl);if(c==='2ad7b1'){tc=0;for(let k=0;k<cs;k++)tc=tc*256+b[j+cl+cll+k]}if(c==='4489')has=true;j+=cl+cll+cs}
+   if(has||!(sec>0))return blob;const dur=new Uint8Array(11);dur.set([0x44,0x89,0x88]);new DataView(dur.buffer).setFloat64(3,sec*1e9/tc);
+   const ns=s2+11,hdr=new Uint8Array(il+8);hdr.set(b.subarray(i,i+il));hdr[il]=1;for(let k=0;k<7;k++)hdr[il+1+k]=Math.floor(ns/Math.pow(256,6-k))%256;
+   return new Blob([blob.slice(0,i),hdr,blob.slice(st,en),dur,blob.slice(en)],{type:blob.type})}
+  i+=il+l2+s2}return blob}catch(x){return blob}}
+const CANV=t=>{try{return mk(1,1).toDataURL(t).startsWith('data:'+t)}catch(e){return false}},WEBP=CANV('image/webp'),AVIF=CANV('image/avif');
+const hasMp3=typeof lamejs!=='undefined';
+const vt=[['video/webm;codecs=vp9,opus','webm'],['video/webm','webm'],['video/mp4;codecs=avc1,mp4a.40.2','mp4'],['video/mp4','mp4']].filter(x=>window.MediaRecorder&&MediaRecorder.isTypeSupported(x[0])),vOpt=[...new Map(vt.map(x=>[x[1],x])).values()].map(x=>`<option value="${x[0]}">${x[1].toUpperCase()}`).join('');
+const BLK=/(youtube\.com|youtu\.be|instagram\.com|tiktok\.com|facebook\.com|fb\.watch|twitter\.com|(^|\.)x\.com|netflix|spotify|primevideo|hotstar|vimeo\.com)/i;
+function link(u){u=(u||'').trim();let x;try{x=new URL(u)}catch(e){return 'Paste a full link starting with https://'}
+ if(BLK.test(x.hostname))return 'Platform sites are not supported (terms of service and copyright). Use open-license sources.';
+ if(!srv)return 'Link downloads need the DoneKwik server (server.js). Download the file normally, then drop it here to convert.';
+ location.href=API+'/api/dl?ok=1&url='+encodeURIComponent(u);return 'Starting download. By downloading you confirm you have the right to this file.'}
+const IMG='png jpg jpeg webp avif gif bmp ico svg heic heif',O=(n,a)=>`<label>${n}<select name=${a[0]}>${a[1]}</select></label>`,I=(n,a,x='')=>`<label>${n}<input name=${a} ${x}></label>`;
+
+const tools=[
+{id:'image',cat:'Convert',n:'Images',ico:'🖼️',fm:'PNG JPG WebP BMP ICO ⟵ HEIC GIF SVG AVIF',in:IMG,h:'Convert between image formats, resize, or compress to a target size (great for form uploads).',
+ o:O('Format',['fmt','<option value=image/png'+(WEBP?'':' selected')+'>PNG<option value=image/jpeg>JPG'+(WEBP?'<option value=image/webp selected>WebP':'')+(AVIF?'<option value=image/avif>AVIF':'')+'<option value=image/bmp>BMP<option value=ico>ICO (favicon)'])+I('Quality %','q','type=range min=30 max=100 value=85')+I('Max width (px)','w','type=number min=16 placeholder=original')+I('Target size (KB)','kb','type=number min=5 placeholder="JPG/WebP only"'),
+ run:async(fs,g,out,prog)=>{const type=g('fmt'),mw=+g('w')||0,kb=+g('kb')||0,xt={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif','image/bmp':'bmp',ico:'ico'}[type];
+  for(let i=0;i<fs.length;i++){prog(i/fs.length,fs[i].name);const im=await loadImg(fs[i]);let w=im.naturalWidth||300,h=im.naturalHeight||150;
+   const k=type==='ico'?Math.min(1,256/Math.max(w,h)):(mw&&w>mw?mw/w:1);w=Math.round(w*k);h=Math.round(h*k);
+   const c=cv(im,w,h,type==='image/jpeg'||type==='image/bmp');let b;
+   if(type==='ico')b=await ico(c);else if(type==='image/bmp')b=bmp(c);
+   else{let q=g('q')/100;b=await toB(c,type,q);if(!b||b.type!==type)throw new Error('This browser cannot write '+xt.toUpperCase());
+    if(kb&&/jpeg|webp/.test(type)){let lo=.05,hi=.95;for(let j=0;j<7;j++){q=(lo+hi)/2;b=await toB(c,type,q);b.size>kb*1024?hi=q:lo=q}b=await toB(c,type,lo)}}
+   out(base(fs[i])+'.'+xt,b)}}},
+{id:'audio',cat:'Convert',n:'Audio',ico:'🎵',fm:'WAV MP3 ⟵ MP3 WAV OGG M4A AAC FLAC Opus + audio from video',in:'mp3 wav ogg m4a aac flac opus weba webm mp4 mov m4v',h:'Convert, trim, merge, speed up or slow down, reverse, fade, mono, lower sample rate.',
+ o:O('Format',['fmt','<option value=wav>WAV'+(hasMp3?'<option value=mp3 selected>MP3':'')])+O('MP3 kbps',['br','<option>64<option selected>128<option>192<option>256'])+O('Sample rate',['sr','<option value=0>Original<option value=44100>44.1 kHz<option value=22050>22 kHz<option value=16000>16 kHz<option value=8000>8 kHz'])+O('Channels',['mono','<option value=0>Keep<option value=1>Mono'])+O('Multiple files',['merge','<option value=0>Separate<option value=1>Merge into one'])+I('Start (s)','s','type=number min=0 value=0')+I('End (s)','e','type=number min=0 placeholder=end')+I('Speed ×','sp','type=number step=.25 min=.25 max=4 value=1')+I('Volume %','gain','type=number value=100 min=0 max=400')+I('Fade in (s)','fi','type=number min=0 value=0')+I('Fade out (s)','fo','type=number min=0 value=0')+O('Reverse',['rev','<option value=0>No<option value=1>Yes']),
+ run:async(fs,g,out,prog)=>{const ac=new AudioContext();let bs=[];
+  for(let i=0;i<fs.length;i++){prog(i/fs.length,'Decoding '+fs[i].name);bs.push([base(fs[i]),await ac.decodeAudioData(await fs[i].arrayBuffer())])}ac.close();
+  if(g('merge')==='1'&&bs.length>1){const sr=bs[0][1].sampleRate,m=new AudioBuffer({length:bs.reduce((a,b)=>a+b[1].length,0),numberOfChannels:2,sampleRate:sr});let o=0;bs.forEach(([,b])=>{for(let c=0;c<2;c++)m.getChannelData(c).set(b.getChannelData(Math.min(c,b.numberOfChannels-1)),o);o+=b.length});bs=[['merged',m]]}
+  for(const[nm,buf]of bs){const s=Math.max(0,+g('s')||0),e=Math.min(+g('e')||buf.duration,buf.duration),dur=Math.max(.01,e-s),sp=+g('sp')||1,sr=+g('sr')||buf.sampleRate,c=g('mono')==='1'?1:Math.min(2,buf.numberOfChannels),od=dur/sp,v=(+g('gain')||0)/100,fi=+g('fi')||0,fo=+g('fo')||0,
+    oc=new OfflineAudioContext(c,Math.ceil(od*sr),sr),src=oc.createBufferSource(),gn=oc.createGain();
+   src.buffer=buf;src.playbackRate.value=sp;gn.gain.setValueAtTime(fi?0:v,0);if(fi)gn.gain.linearRampToValueAtTime(v,fi);if(fo){gn.gain.setValueAtTime(v,Math.max(fi,od-fo));gn.gain.linearRampToValueAtTime(0,od)}
+   src.connect(gn).connect(oc.destination);src.start(0,s,dur);const r=await oc.startRendering();
+   if(g('rev')==='1')for(let k=0;k<c;k++)r.getChannelData(k).reverse();
+   const k=g('fmt');out(nm+'.'+k,k==='mp3'?mp3(r,+g('br')):wav(r))}}},
+{id:'video',cat:'Convert',n:'Video',ico:'🎬',fm:'WebM MP4 ⟵ MP4 WebM MOV OGV · frames JPG · audio',in:'mp4 webm mov mkv ogv m4v',h:'Compress, shrink, trim, change speed, mute, extract audio, or grab frames as images.',
+ o:O('Mode',['mode','<option value=video>Video<option value=audio>Audio only<option value=frames>Frames to JPG'])+O('Format',['fmt',vOpt])+O('Height',['h','<option value=0>Original<option value=720>720p<option value=480>480p<option value=360>360p<option value=240>240p<option value=144>144p (data saver)'])+O('Quality',['bpp','<option value=1.5>Small file<option value=3 selected>Balanced<option value=6>High'])+I('Start (s)','s','type=number min=0 value=0')+I('End (s)','e','type=number min=0 placeholder=end')+I('Speed ×','sp','type=number step=.25 min=.25 max=4 value=1')+O('Sound',['mute','<option value=0>Keep<option value=1>Mute'])+I('Frame every (s)','iv','type=number min=.1 value=5'),
+ run:async(fs,g,out,prog)=>{for(const f of fs){const mode=g('mode'),H=+g('h'),s=Math.max(0,+g('s')||0),sp=+g('sp')||1,v=document.createElement('video');v.playsInline=true;v.src=URL.createObjectURL(f);
+  await new Promise((ok,no)=>{v.onloadedmetadata=ok;v.onerror=()=>no(new Error('Cannot decode '+f.name))});
+  let w=v.videoWidth,h=v.videoHeight;if(H&&h>H){w=Math.round(w*H/h/2)*2;h=H}const end=Math.min(+g('e')||v.duration,v.duration),seek=t=>new Promise(r=>{v.onseeked=r;v.currentTime=t});
+  if(mode==='frames'){const iv=Math.max(.1,+g('iv')||5);let n=0;for(let t=s;t<end;t+=iv){await seek(t);prog((t-s)/(end-s||1),f.name);out(base(f)+'-'+P(++n,3)+'.jpg',await toB(cv(v,w,h),'image/jpeg',.92))}continue}
+  need(window.MediaRecorder,'MediaRecorder');if(s)await seek(s);v.playbackRate=sp;
+  const ac=new AudioContext(),dest=ac.createMediaStreamDestination();await ac.resume();try{ac.createMediaElementSource(v).connect(dest)}catch(e){}
+  let tr=g('mute')==='1'?[]:[...dest.stream.getAudioTracks()],c,x;
+  if(mode==='video'){c=mk(w,h);x=c.getContext('2d');tr=[...c.captureStream(30).getVideoTracks(),...tr]}
+  const mime=mode==='video'?g('fmt'):'audio/webm;codecs=opus',xt=mime.includes('mp4')?'mp4':'webm',ch=[],rec=new MediaRecorder(new MediaStream(tr),{mimeType:mime,videoBitsPerSecond:Math.max(2e5,w*h*g('bpp')),audioBitsPerSecond:96000});
+  rec.ondataavailable=e=>e.data.size&&ch.push(e.data);const done=new Promise(r=>rec.onstop=r);rec.start(500);const t0=performance.now();
+  let fin;const ended=new Promise(r=>{fin=r;v.onended=r});
+  const tick=setInterval(()=>{if(x)x.drawImage(v,0,0,w,h);prog((v.currentTime-s)/((end-s)||1),f.name);if(v.currentTime>=end){v.pause();fin()}},33);
+  try{await v.play()}catch(e){clearInterval(tick);rec.stop();throw new Error('Browser blocked playback. Click Convert again.')}
+  await ended;clearInterval(tick);rec.stop();await done;ac.close();let ob=new Blob(ch,{type:mime.split(';')[0]});if(xt==='webm')ob=await fixWebm(ob,(performance.now()-t0)/1000);out(base(f)+(mode==='video'?'-converted.':'-audio.')+xt,ob)}}},
+{id:'sheet',cat:'Convert',n:'Spreadsheets & data',ico:'📊',fm:'XLSX ODS CSV TSV JSON HTML TXT',in:'xlsx ods csv tsv json html htm txt',h:'Convert between spreadsheet and data formats. Every sheet is exported.',
+ o:O('Output',['fmt','<option value=xlsx>XLSX<option value=ods>ODS<option value=csv selected>CSV<option value=tsv>TSV<option value=json>JSON<option value=html>HTML table<option value=txt>TXT']),
+ run:async(fs,g,out,prog)=>{need(window.JSZip,'ZIP engine');const k=g('fmt'),MT={csv:'text/csv',tsv:'text/tab-separated-values',json:'application/json',html:'text/html',txt:'text/plain'};
+  for(let i=0;i<fs.length;i++){const f=fs[i];prog(i/fs.length,f.name);const wb=await readBook(f);if(!wb.sheets.length||wb.sheets.every(s=>!s.rows.length))throw new Error(f.name+': no data found');
+   if(wb.text&&(k==='xlsx'||k==='ods'||k==='json'))wb.sheets.forEach(s=>s.rows=typed(s.rows));
+   if(k==='xlsx'||k==='ods'){out(base(f)+'.'+k,k==='xlsx'?await writeXlsx(wb):await writeOds(wb));continue}
+   wb.sheets.forEach(s=>out(base(f)+(wb.sheets.length>1?'-'+s.name.replace(/[^\w\- ]/g,'_'):'')+'.'+k,new Blob([sheetText(s.rows,k)],{type:MT[k]})))}}},
+{id:'doc',cat:'Convert',n:'Documents',ico:'📝',fm:'HTML TXT PDF ⟵ DOCX MD TXT HTML',in:'docx md markdown txt html htm',h:'Turn Word, Markdown, text and HTML files into HTML, plain text or PDF. Word images are not carried over.',
+ o:O('Output',['fmt','<option value=html>HTML<option value=txt>TXT<option value=pdf>PDF']),
+ run:async(fs,g,out,prog)=>{const k=g('fmt');for(let i=0;i<fs.length;i++){const f=fs[i];prog(i/fs.length,f.name);let h,tx,raw=null;const e=ext(f);
+  if(e==='docx'){need(window.JSZip,'ZIP engine');({html:h,text:tx}=await readDocx(await f.arrayBuffer()))}
+  else{const s=(await f.text()).replace(/^\uFEFF/,'');if(e==='md'||e==='markdown'){need(window.marked,'Markdown engine');h=marked.parse(s);tx=s}
+   else if(e==='html'||e==='htm'){raw=s;const d=new DOMParser().parseFromString(s,'text/html');d.querySelectorAll('script,style').forEach(n=>n.remove());h=d.body.innerHTML;tx=d.body.textContent.replace(/\n{3,}/g,'\n\n').trim()+'\n'}
+   else{h='<pre>'+esc(s)+'</pre>';tx=s}}
+  if(k==='html')out(base(f)+'.html',new Blob([raw&&/<html/i.test(raw)?raw:'<!doctype html>\n<html><head><meta charset="utf-8"><title>'+xe(base(f))+'</title><style>body{font-family:system-ui,sans-serif;max-width:46rem;margin:2rem auto;padding:0 1rem;line-height:1.6}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:4px 8px}pre{white-space:pre-wrap}</style></head><body>'+h+'</body></html>'],{type:'text/html'}));
+  else if(k==='txt')out(base(f)+'.txt',new Blob([tx],{type:'text/plain'}));else out(base(f)+'.pdf',await t2pdf(tx))}}},
+{id:'subs',cat:'Convert',n:'Subtitles',ico:'💬',fm:'SRT VTT TXT',in:'srt vtt txt',h:'Convert caption files and shift timing to fix out-of-sync subtitles.',
+ o:O('Output',['fmt','<option value=srt>SRT<option value=vtt>VTT<option value=txt>Plain text'])+I('Shift (s, + or −)','sh','type=number step=.1 value=0'),
+ run:async(fs,g,out)=>{for(const f of fs){const c=parse(await f.text(),(+g('sh')||0)*1000);if(!c.length)throw new Error(f.name+': no captions found');const k=g('fmt');out(base(f)+'.'+k,new Blob([build(c,k)]))}}},
+{id:'imgedit',cat:'Edit',n:'Image editor',ico:'🎨',fm:'Crop · rotate · flip · filters · watermark',in:IMG,h:'Crop to a ratio, rotate, flip, apply filters and add a text watermark. Re-saving also strips EXIF data.',
+ o:O('Crop',['ar','<option value="">Free<option>1:1<option>4:3<option>3:4<option>16:9<option>9:16'])+O('Rotate',['rot','<option value=0>0°<option value=90>90°<option value=180>180°<option value=270>270°'])+O('Flip',['fl','<option value=>None<option value=h>Horizontal<option value=v>Vertical'])+O('Filter',['flt','<option value=>None<option value=grayscale(1)>Grayscale<option value=sepia(1)>Sepia<option value=invert(1)>Invert<option value=blur(3px)>Blur'])+I('Brightness %','br','type=number value=100')+I('Contrast %','ct','type=number value=100')+I('Watermark text','wm','')+O('Save as',['fmt','<option value=image/png>PNG<option value=image/jpeg>JPG'+(WEBP?'<option value=image/webp>WebP':'')]),
+ run:async(fs,g,out,prog)=>{const type=g('fmt'),xt={'image/png':'png','image/jpeg':'jpg','image/webp':'webp'}[type];
+  for(let i=0;i<fs.length;i++){prog(i/fs.length,fs[i].name);const im=await loadImg(fs[i]);let sw=im.naturalWidth,sh=im.naturalHeight,sx=0,sy=0;const ar=g('ar');
+   if(ar){const[a,b]=ar.split(':'),t=a/b;if(sw/sh>t){const n=sh*t;sx=(sw-n)/2;sw=n}else{const n=sw/t;sy=(sh-n)/2;sh=n}}
+   const r=+g('rot'),W=r%180?sh:sw,Ht=r%180?sw:sh,c=mk(Math.round(W),Math.round(Ht)),x=c.getContext('2d'),f=g('fl');
+   if(type==='image/jpeg'){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}
+   x.filter=(g('flt')||'')+' brightness('+g('br')+'%) contrast('+g('ct')+'%)';x.translate(c.width/2,c.height/2);x.rotate(r*Math.PI/180);x.scale(f==='h'?-1:1,f==='v'?-1:1);x.drawImage(im,sx,sy,sw,sh,-sw/2,-sh/2,sw,sh);
+   x.setTransform(1,0,0,1,0,0);x.filter='none';const t=g('wm');if(t){const z=Math.max(14,c.width/18);x.font='bold '+z+'px sans-serif';x.textAlign='right';x.fillStyle='#ffffffcc';x.strokeStyle='#0008';x.lineWidth=z/10;x.strokeText(t,c.width-z/2,c.height-z/2);x.fillText(t,c.width-z/2,c.height-z/2)}
+   const eb=await toB(c,type,.92);if(!eb||eb.type!==type)throw new Error('This browser cannot write '+xt.toUpperCase());out(base(fs[i])+'-edited.'+xt,eb)}}},
+{id:'pdf',cat:'Edit',n:'PDF tools',ico:'📕',fm:'Merge · split · extract · delete · rotate · watermark · numbers · PDF↔images/text',in:'pdf png jpg jpeg webp gif bmp',h:'Work with PDFs privately. Images to PDF, PDF to images, PDF to text and more.',
+ o:O('Action',['mode','<option value=merge>Merge PDFs<option value=img>Images to PDF<option value=ext>Extract pages<option value=del>Delete pages<option value=split>Split into pages<option value=rev>Reverse page order<option value=rot>Rotate 90°<option value=wm>Add watermark<option value=num>Add page numbers<option value=png>PDF to images (PNG)<option value=txt>PDF to text'])+I('Pages (extract/delete)','r','placeholder=1-3,5')+I('Watermark text','t','placeholder=DRAFT')+I('Image scale','sc','type=number step=.5 value=1.5'),
+ run:async(fs,g,out,prog)=>{const{PDFDocument:D,degrees:dg,rgb,StandardFonts:SF}=PDFLib,m=g('mode');
+  if(m==='img'){const d=await D.create();for(const f of fs){const im0=await loadImg(f),c=cv(im0,im0.naturalWidth,im0.naturalHeight,1),im=await d.embedJpg(await(await toB(c,'image/jpeg',.92)).arrayBuffer());d.addPage([im.width,im.height]).drawImage(im,{x:0,y:0,width:im.width,height:im.height})}return out('images.pdf',await bl(d))}
+  if(m==='png'||m==='txt'){const lib=await pdfjs();
+   for(const f of fs){const task=lib.getDocument({data:new Uint8Array(await f.arrayBuffer())}),d=await task.promise;let X='';
+    for(let p=1;p<=d.numPages;p++){prog(p/d.numPages,f.name+' page '+p);const pg=await d.getPage(p);
+     if(m==='png'){const vp=pg.getViewport({scale:+g('sc')||1.5}),c=mk(Math.ceil(vp.width),Math.ceil(vp.height));await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;out(base(f)+'-p'+p+'.png',await toB(c,'image/png'))}
+     else X+=(await pg.getTextContent()).items.map(i=>i.str+(i.hasEOL?'\n':'')).join('')+'\n\n'}
+    if(m==='txt')out(base(f)+'.txt',new Blob([X],{type:'text/plain'}));try{await task.destroy()}catch(e){}}return}
+  const docs=[];for(const f of fs)docs.push(await D.load(await f.arrayBuffer(),{ignoreEncryption:true}));
+  if(m==='merge'){const d=await D.create();for(const s of docs)(await d.copyPages(s,s.getPageIndices())).forEach(p=>d.addPage(p));return out('merged.pdf',await bl(d))}
+  for(let i=0;i<docs.length;i++){const s=docs[i],n=s.getPageCount(),b=base(fs[i]);
+   if(m==='rot'){s.getPages().forEach(p=>p.setRotation(dg((p.getRotation().angle+90)%360)));out(b+'-rotated.pdf',await bl(s))}
+   else if(m==='split')for(let p=0;p<n;p++){const d=await D.create();d.addPage((await d.copyPages(s,[p]))[0]);out(b+'-p'+(p+1)+'.pdf',await bl(d))}
+   else if(m==='wm'||m==='num'){const F=await s.embedFont(SF.Helvetica);s.getPages().forEach((p,k)=>{const{width:w,height:h}=p.getSize();m==='wm'?p.drawText(g('t')||'DRAFT',{x:w*.15,y:h*.3,size:56,font:F,color:rgb(.6,.6,.6),opacity:.35,rotate:dg(40)}):p.drawText((k+1)+' / '+n,{x:w/2-14,y:18,size:10,font:F})});out(b+(m==='wm'?'-watermarked':'-numbered')+'.pdf',await bl(s))}
+   else{let ix=m==='rev'?[...Array(n).keys()].reverse():range(g('r'),n);if(m==='del'){const x=new Set(ix);ix=[...Array(n).keys()].filter(k=>!x.has(k))}
+    if(!ix.length)throw new Error('Enter pages like 1-3,5');const d=await D.create();(await d.copyPages(s,ix)).forEach(p=>d.addPage(p));out(b+'-'+m+'.pdf',await bl(d))}}}},
+{id:'zip',cat:'Files',n:'Archives',ico:'🗜️',fm:'ZIP create/extract · GZ compress/extract',any:1,h:'Create or extract ZIP files and compress or decompress GZ files.',
+ o:O('Action',['mode','<option value=create>Create ZIP<option value=extract>Extract ZIP<option value=gz>Compress to GZ<option value=ungz>Decompress GZ']),
+ run:async(fs,g,out,prog)=>{const m=g('mode'),pipe=(f,S)=>new Response(f.stream().pipeThrough(S)).blob();
+  if(m==='create'){const z=new JSZip();fs.forEach(f=>z.file(f.name,f));return out('archive.zip',await z.generateAsync({type:'blob',compression:'DEFLATE'},x=>prog(x.percent/100,'Compressing')))}
+  for(const f of fs){if(m==='gz')out(f.name+'.gz',await pipe(f,new CompressionStream('gzip')));else if(m==='ungz')out(f.name.replace(/\.gz$/i,'')||'file',await pipe(f,new DecompressionStream('gzip')));
+   else{const z=await JSZip.loadAsync(f);for(const e of Object.values(z.files))if(!e.dir)out(e.name.replace(/\//g,'_'),await e.async('blob'))}}}},
+{id:'hash',cat:'Files',n:'Checksums',ico:'🔐',fm:'SHA-1 SHA-256 SHA-384 SHA-512',any:1,h:'Verify file integrity. Works on any file.',o:O('Algorithm',['alg','<option value=SHA-256>SHA-256<option>SHA-1<option>SHA-384<option>SHA-512']),
+ run:async(fs,g,out)=>{const a=g('alg'),L=[];for(const f of fs){const d=await crypto.subtle.digest(a,await f.arrayBuffer());L.push([...new Uint8Array(d)].map(b=>P(b.toString(16))).join('')+'  '+f.name)}const t=L.join('\n');out('checksums.txt',new Blob([t]));return t.replace(/\n/g,'  |  ')}},
+{id:'text',cat:'Text',n:'Text lab',ico:'🔤',fm:'JSON · CSV · Base64 · URL · case · sort · count · hash · Markdown',text:1,h:'Quick text and data utilities.',
+ o:'<label style="grid-column:1/-1">Input<textarea id=ti></textarea></label>'+O('Tool',['mode','<option value=jp>JSON pretty-print<option value=jm>JSON minify<option value=j2c>JSON to CSV<option value=c2j>CSV to JSON<option value=be>Base64 encode<option value=bd>Base64 decode<option value=ue>URL encode<option value=ud>URL decode<option value=up>UPPERCASE<option value=lo>lowercase<option value=ti>Title Case<option value=so>Sort lines<option value=un>Unique lines<option value=sp>Clean spaces<option value=rv>Reverse<option value=ct>Count words<option value=sh>SHA-256<option value=md>Markdown to HTML'])+'<label style="grid-column:1/-1">Output<textarea id=to readonly></textarea></label>',
+ run:async(fs,g,out)=>{const m=g('mode'),s=$('#ti').value,J=()=>JSON.parse(s);
+  const F={jp:()=>JSON.stringify(J(),null,2),jm:()=>JSON.stringify(J()),j2c:()=>csvOut(fromJson(J())),c2j:()=>JSON.stringify(toObjs(typed(csvParse(s))),null,2),
+   be:()=>btoa(String.fromCharCode(...new TextEncoder().encode(s))),bd:()=>new TextDecoder().decode(Uint8Array.from(atob(s.trim()),c=>c.charCodeAt(0))),ue:()=>encodeURIComponent(s),ud:()=>decodeURIComponent(s),up:()=>s.toUpperCase(),lo:()=>s.toLowerCase(),
+   ti:()=>s.replace(/\w\S*/g,w=>w[0].toUpperCase()+w.slice(1).toLowerCase()),so:()=>s.split('\n').sort().join('\n'),un:()=>[...new Set(s.split('\n'))].join('\n'),sp:()=>s.replace(/[ \t]+/g,' ').replace(/ ?\n ?/g,'\n').replace(/\n{3,}/g,'\n\n').trim(),rv:()=>[...s].reverse().join(''),
+   ct:()=>(s.trim()?s.trim().split(/\s+/).length:0)+' words, '+s.length+' characters, '+s.split('\n').length+' lines',md:()=>{need(window.marked,'Markdown engine');return marked.parse(s)},
+   sh:async()=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(b=>P(b.toString(16))).join('')};
+  let r;try{r=await F[m]()}catch(e){throw new Error('Could not process this input: '+e.message)}$('#to').value=r;out('text-result.txt',new Blob([r]))}}
+];
+
+
+
+/* ===== Icons and brand mark ===== */
+const IP={
+grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',
+list:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>',
+download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+convert:'<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+edit:'<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>',
+archive:'<polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/>',
+type:'<polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/>',
+star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+layers:'<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+globe:'<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+help:'<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+moon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+sun:'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
+audio:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+video:'<rect x="2" y="2" width="20" height="20" rx="2.2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/>',
+vid2:'<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>',
+headphones:'<path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>',
+chart:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+filetext:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+file:'<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/>',
+msg:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+crop:'<path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"/><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"/>',
+link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+arrow:'<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/>'};
+const ic=(k,s=20,w=1.8,f)=>'<svg viewBox="0 0 24 24" width="'+s+'" height="'+s+'" fill="'+(f?'currentColor':'none')+'" stroke="currentColor" stroke-width="'+w+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IP[k]+'</svg>';
+const MARK='<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 12.8l3.9 3.9 7.6-8.4" stroke-width="2.6"/><path d="M3 9h4M2 13h3" stroke-width="1.8" stroke-opacity=".6"/></svg>';
+const IK={image:'image',audio:'audio',video:'video',sheet:'chart',doc:'filetext',subs:'msg',imgedit:'crop',pdf:'file',zip:'archive',hash:'lock',text:'type'};
+document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=ic(e.dataset.i,+e.dataset.s||18));
+
+/* ===== UI core ===== */
+let cur=null;const nav=$('#nav'),main=$('#main');
+const CATN={Convert:'Converters',Edit:'Editors',Files:'File tools',Text:'Extras',Download:'Downloader'};
+function hd(bc,t,s){$('#bc').textContent=bc.join('  ›  ');$('#ttl').textContent=t;$('#sub').textContent=s||'';$('#back').hidden=bc.length<2}
+function show(id,k){[...main.children].forEach(s=>s.hidden=s.id!==id&&s.id!=='hd');cur=tools.find(t=>'t-'+t.id===id)||null;
+ nav.querySelectorAll('.ni').forEach(b=>b.setAttribute('aria-current',b.dataset.k===(k||id)));$('#vt').hidden=id!=='home';scrollTo(0,0)}
+function showView(id,title){show(id,id);hd(['Dashboard',title],title)}
+/* ===== Supported sites registry (tier: open | free | platform | drm) ===== */
+const SITES=[
+['open','Open and public domain','Internet Archive=archive.org;Wikimedia Commons=wikimedia.org;Openverse=openverse.org;Project Gutenberg=gutenberg.org;LibriVox=librivox.org;Free Music Archive=freemusicarchive.org;Jamendo=jamendo.com;NASA=nasa.gov;Library of Congress=loc.gov;Europeana=europeana.eu;media.ccc.de=ccc.de;Blender=blender.org;MIT OpenCourseWare=ocw.mit.edu;Khan Academy=khanacademy.org;TED=ted.com;NPTEL=nptel.ac.in;PeerTube (many servers)=peertube.tv|framatube.org|tilvids.com'],
+['free','News and broadcasters','BBC=bbc.co.uk|bbc.com;Al Jazeera=aljazeera.com;DW=dw.com;France 24=france24.com;Euronews=euronews.com;NHK World=nhk.or.jp;PBS=pbs.org;NPR=npr.org;CBS News=cbsnews.com;ABC News=abcnews.go.com;NBC News=nbcnews.com;CNN=cnn.com;Reuters=reuters.com;AP News=apnews.com;Bloomberg=bloomberg.com;Sky News=news.sky.com;ARTE=arte.tv;ZDF=zdf.de;ARD Mediathek=ardmediathek.de;3sat=3sat.de;RAI=rai.it;RTVE=rtve.es;SVT Play=svtplay.se;NRK=nrk.no;DR TV=dr.dk;Yle Areena=yle.fi;ORF=orf.at;SRF=srf.ch;CBC=cbc.ca;ABC Australia=abc.net.au;SBS=sbs.com.au;1News NZ=1news.co.nz;France TV=france.tv;TF1=tf1.fr;NDR=ndr.de;WDR=wdr.de;BR=br.de'],
+['free','Entertainment and clips','IMDb=imdb.com;Vice=vice.com;9GAG=9gag.com;Imgur=imgur.com;Giphy=giphy.com;Coub=coub.com;Newgrounds=newgrounds.com;Flickr=flickr.com;Streamable=streamable.com;Dumpert=dumpert.nl;eBaum’s World=ebaumsworld.com;Comedy Central=cc.com;MTV=mtv.com;History=history.com;Adult Swim=adultswim.com;Nickelodeon=nick.com;Steam=steampowered.com|steamcommunity.com;Medal=medal.tv'],
+['free','Sports highlights','ESPN=espn.com;NFL=nfl.com;NBA=nba.com;MLB=mlb.com;NHL=nhl.com;Olympics=olympics.com'],
+['free','Work and file hosts','Dropbox=dropbox.com;Google Drive=drive.google.com;Loom=loom.com;Zoom recordings=zoom.us;Box=box.com;Wistia=wistia.com;Vidyard=vidyard.com'],
+['free','Podcasts and AI music','Acast=acast.com;Spreaker=spreaker.com;Audioboom=audioboom.com;Podbean=podbean.com;Anchor=anchor.fm;Suno=suno.com'],
+['platform','Social and video platforms','YouTube=youtube.com|youtu.be|youtube-nocookie.com;Instagram=instagram.com;TikTok=tiktok.com;Facebook=facebook.com|fb.watch;X (Twitter)=x.com|twitter.com;LinkedIn=linkedin.com;Reddit=reddit.com|redd.it;Pinterest=pinterest.com;Snapchat=snapchat.com;Tumblr=tumblr.com;Threads=threads.net;Bluesky=bsky.app;Telegram=t.me;VK=vk.com;OK.ru=ok.ru;Weibo=weibo.com;Douyin=douyin.com;Kuaishou=kuaishou.com;Bilibili=bilibili.com|b23.tv;Niconico=nicovideo.jp;Naver=naver.com;Likee=likee.video;ShareChat=sharechat.com;Vimeo=vimeo.com;Dailymotion=dailymotion.com|dai.ly;Rumble=rumble.com;Odysee=odysee.com;BitChute=bitchute.com;Twitch=twitch.tv;Kick=kick.com;Trovo=trovo.live;Triller=triller.co'],
+['platform','Music platforms','SoundCloud=soundcloud.com;Bandcamp=bandcamp.com;Mixcloud=mixcloud.com;Audiomack=audiomack.com'],
+['drm','Protected (never supported)','Netflix=netflix.com;Prime Video=primevideo.com;Disney+=disneyplus.com;Hotstar=hotstar.com;JioCinema=jiocinema.com;SonyLIV=sonyliv.com;ZEE5=zee5.com;Voot=voot.com;Max=max.com|hbomax.com;Hulu=hulu.com;Peacock=peacocktv.com;Paramount+=paramountplus.com;Apple TV+=tv.apple.com;Crunchyroll=crunchyroll.com;Spotify=spotify.com;Apple Music=music.apple.com;Deezer=deezer.com;Tidal=tidal.com;Udemy=udemy.com;Coursera=coursera.org;Pluralsight=pluralsight.com;Skillshare=skillshare.com;MasterClass=masterclass.com']
+];
+const SMAP=SITES.flatMap(([tier,cat,s])=>s.split(';').map(x=>{const[n,d]=x.split('=');return{n,tier,cat,d:d.split('|')}}));
+const siteOf=u=>{try{const h=new URL(u).hostname.replace(/^www\./,'');return SMAP.find(s=>s.d.some(d=>h===d||h.endsWith('.'+d)))||null}catch(e){return null}};
+const TL={open:'Open license',free:'Public site',platform:'Platform · terms apply',drm:'Protected · not supported'};
+const tier=t=>'<span class="tr t-'+t+'">'+TL[t]+'</span>';
+let plat=false;
+
+/* ===== Downloader ===== */
+const selb=(n,l,o)=>'<label>'+l+'<select name='+n+'>'+o.split(',').map(x=>'<option value='+x.split(':')[0]+'>'+x.split(':')[1]).join('')+'</select></label>';
+const txtf=(n,l,d,p='')=>'<label>'+l+'<input name='+n+' value="'+d+'" placeholder="'+p+'"></label>';
+const TRIM=txtf('start','Clip start','','0:30 or 90')+txtf('end','Clip end','','2:15 or inf');
+const DO={
+ video:selb('fmt','Container','mp4:MP4,mkv:MKV,webm:WebM,mov:MOV,avi:AVI,flv:FLV,gif:GIF (animated)')+selb('q','Quality','0:Best available,4320:8K (4320p),2160:4K (2160p),1440:1440p,1080:1080p,720:720p,480:480p,360:360p,240:240p,144:144p (data saver)')+selb('codec','Codec','auto:Auto,h264:H.264 (most compatible),vp9:VP9,av1:AV1')+selb('fps','Frame rate','0:Any,30:Up to 30 fps')+selb('aud','Sound','1:With sound,0:Video only')+TRIM,
+ audio:selb('fmt','Format','mp3:MP3,m4a:M4A,aac:AAC,opus:Opus,vorbis:OGG Vorbis,flac:FLAC,wav:WAV,alac:ALAC,aiff:AIFF')+selb('br','Bitrate','0:Best,320:320 kbps,256:256 kbps,192:192 kbps,128:128 kbps,96:96 kbps,64:64 kbps (data saver)')+selb('meta','Tags and cover art','1:Embed,0:Skip')+TRIM,
+ subs:txtf('lang','Language code','en','en, hi, mr, all')+selb('sfmt','Format','srt:SRT,vtt:VTT,ass:ASS,lrc:LRC'),
+ thumb:selb('tfmt','Format','jpg:JPG,png:PNG,webp:WebP')
+};
+const DT=[['video','Video'],['audio','Audio'],['subs','Subtitles'],['thumb','Thumbnail'],['open','Open-license search'],['file','Direct file']];
+let dk='video';
+const dsec=document.createElement('section');dsec.id='dl';dsec.hidden=true;
+dsec.innerHTML='<div class="tabs" id="dtabs"></div><div class="card" style="margin-top:0"><div id="srvbox" class="srv"></div><div class="dbar"><input id="du" placeholder="Paste a video, audio or file link"><button class="ghost" id="dp">Paste</button><button class="btn" id="df">Fetch info</button></div><p id="dsite" style="margin:8px 0 0"></p><div id="dinfo"></div></div>'+
+ '<div class="card" id="dmain"><div class="opts" id="dopt"></div><pre class="cmd" id="dcmd"></pre><label class="chk"><input type="checkbox" id="dok"><span>I own this content, it is licensed to me, or it is public domain. I accept the <a href="#" id="dlg">terms</a>.</span></label><div class="act"><button class="btn big" id="dgo" style="flex:1">Download</button><button class="ghost" id="dcp">Copy command</button></div><div class="pg"><i></i></div><p class="st" id="dst" role="status"></p></div>'+
+ '<div class="card" id="dopen" hidden><div class="dbar"><select id="os" aria-label="Source" style="width:auto"><option value=openverse-images>Images (Openverse)<option value=openverse-audio>Audio (Openverse)<option value=commons>Wikimedia Commons<option value=archive>Internet Archive<option value=gutenberg>Books (Gutenberg)</select><input id="oq" placeholder="Search free-to-use media"><button class="btn" id="osb">Search</button></div><p class="st" id="ost"></p><div class="grid" id="ores" style="margin-top:10px"></div></div>';
+main.append(dsec);
+const dq=s=>$(s,dsec),vals=()=>Object.fromEntries([...dsec.querySelectorAll('#dopt [name]')].map(e=>[e.name,e.value]));
+function ytCmd(k,v,u){const a=['yt-dlp','--no-playlist'],S=[];
+ if(k==='video'){const h=+v.q?'[height<='+v.q+']':'';a.push('-f','"'+(v.aud==='0'?'bv*'+h:'bv*'+h+'+ba/b'+h)+'"');if(v.codec!=='auto')S.push('vcodec:'+v.codec);if(v.fps==='30')S.push('fps:30');if(S.length)a.push('-S',S.join(','));a.push(/^(mp4|mkv|webm)$/.test(v.fmt)?'--merge-output-format':'--recode-video',v.fmt)}
+ else if(k==='audio'){a.push('-f','"ba/b"','-x','--audio-format',v.fmt,'--audio-quality',v.br==='0'?'0':v.br+'K');if(v.meta==='1'&&/^(mp3|m4a|flac|opus)$/.test(v.fmt))a.push('--embed-metadata','--embed-thumbnail')}
+ else if(k==='subs')a.push('--skip-download','--write-subs','--write-auto-subs','--sub-langs',v.lang||'en','--convert-subs',v.sfmt);
+ else a.push('--skip-download','--write-thumbnail','--convert-thumbnails',v.tfmt);
+ if((k==='video'||k==='audio')&&(v.start||v.end))a.push('--download-sections','"*'+(v.start||'0')+'-'+(v.end||'inf')+'"','--force-keyframes-at-cuts');
+ a.push('"'+(u||'URL')+'"');return a.join(' ')}
+function dsync(){const u=dq('#du').value.trim(),s=u&&siteOf(u),el=dq('#dsite');
+ el.innerHTML=!u?'':s?'<b></b> '+tier(s.tier)+(s.tier==='platform'&&srv&&!plat?' <small>Switched off on this server.</small>':''):'<small>Not in the list. The generic extractor may still work for pages with embedded video.</small>';
+ if(s)el.firstChild.textContent=s.n;
+ dq('#dcmd').textContent=ytCmd(dk,vals(),u)}
+function dtab(k){dk=k;dq('#dtabs').innerHTML='';DT.forEach(([id,l])=>{const b=document.createElement('button');b.textContent=l;b.setAttribute('aria-current',id===k);b.onclick=()=>dtab(id);dq('#dtabs').append(b)});
+ const o=k==='open',f=k==='file';dq('#dopen').hidden=!o;dq('#dmain').hidden=o;dq('#dopt').innerHTML=DO[k]||'';dq('#dcmd').hidden=f;dq('#dcp').hidden=f;dq('#df').hidden=o||f;dq('#du').parentNode.hidden=o;dq('#dsite').hidden=o;dq('#dinfo').hidden=o||f;
+ dq('#dgo').textContent=f?'Download file':'Download '+({video:'video',audio:'audio',subs:'subtitles',thumb:'thumbnail'}[k]);
+ updateServer();
+ dsec.querySelectorAll('#dopt select,#dopt input').forEach(e=>e.oninput=dsync);dsync();hd(['Dashboard','Downloader',DT.find(x=>x[0]===k)[1]],'Downloader','Download video, audio, subtitles or open-license media.')}
+async function dinfo(){const u=dq('#du').value.trim(),b=dq('#dinfo'),st=dq('#dst');if(!u){st.textContent='Paste a link first.';return}
+ if(!srv){st.textContent='Fetching details needs a connected server.';openSrv();return}b.textContent='Reading link…';
+ try{const j=await fetch(API+'/api/ytdl/info?url='+encodeURIComponent(u)).then(r=>r.json());if(j.error)throw new Error(j.error);
+  b.innerHTML='<div class="dinfo"><img alt=""><div><b></b><br><small></small></div></div>';if(j.thumb)$('img',b).src=j.thumb;else $('img',b).remove();
+  $('b',b).textContent=j.title;const m=Math.round(j.duration/60);$('small',b).textContent=[j.by,m?m+' min':'',j.heights[0]?'up to '+j.heights[0]+'p':''].filter(Boolean).join(' · ')}catch(e){b.textContent='⚠ '+e.message}}
+async function dgo(){const u=dq('#du').value.trim(),st=dq('#dst'),pg=$('.pg i',dsec);if(!u){st.textContent='Paste a link first.';return}
+ if(!dq('#dok').checked){st.textContent='Please tick the confirmation box.';return}
+ const s=siteOf(u);if(s&&s.tier==='drm'){st.textContent=s.n+' uses protected streaming. Not supported.';return}
+ if(!srv){const c=dk==='file'?'':dq('#dcmd').textContent;(c&&navigator.clipboard?navigator.clipboard.writeText(c):Promise.reject()).then(()=>st.textContent='Not connected. The yt-dlp command was copied: paste it in a terminal that has yt-dlp, or connect a server above.').catch(()=>st.textContent='Not connected. Use Copy command, or connect a server above.');openSrv();return}
+ if(dk==='file'){location.href=API+'/api/dl?ok=1&url='+encodeURIComponent(u);st.textContent='Starting download…';return}
+ const b=dq('#dgo');b.disabled=true;st.textContent='Starting…';pg.style.width='3%';
+ try{const r=await fetch(API+'/api/ytdl/start?'+new URLSearchParams({url:u,k:dk,...vals()})).then(r=>r.json());if(r.error)throw new Error(r.error);
+  for(;;){await new Promise(r=>setTimeout(r,1000));const j=await fetch(API+'/api/ytdl/status?id='+r.id).then(r=>r.json());
+   if(j.error&&j.state!=='err')throw new Error(j.error);if(j.state==='err')throw new Error(j.error);
+   pg.style.width=Math.max(3,j.pct)+'%';st.textContent=j.state==='done'?'Ready. Saving…':'Downloading '+Math.round(j.pct)+'% '+(j.speed||'')+' '+(j.eta?'ETA '+j.eta:'');
+   if(j.state==='done'){hist(j.file,'Downloader',j.size);location.href=API+'/api/ytdl/file?id='+r.id;break}}}
+ catch(e){pg.style.width='0';st.textContent='⚠ '+e.message}b.disabled=false}
+/* Open-license search that runs directly in the browser (used when no DoneKwik server is connected). These sources allow cross-origin requests. */
+const cj=async u=>{const r=await fetch(u,{headers:{accept:'application/json'}});if(!r.ok)throw new Error('The source returned '+r.status);return r.json()},cstrip=s=>(s||'').replace(/<[^>]+>/g,''),csize=n=>n>1048576?(n/1048576).toFixed(1)+' MB':Math.round(n/1024)+' KB';
+const cov=async(kind,q)=>(await cj('https://api.openverse.org/v1/'+kind+'/?page_size=24&q='+q)).results.map(x=>({title:x.title,by:x.creator,lic:(/^(cc0|pdm)$/.test(x.license)?'':'CC ')+x.license.toUpperCase()+(x.license_version?' '+x.license_version:''),thumb:x.thumbnail,page:x.foreign_landing_url,files:[{label:(x.filetype||'file').toUpperCase(),url:x.url}]}));
+const CSRC={'openverse-images':q=>cov('images',q),'openverse-audio':q=>cov('audio',q),
+ async commons(q){const j=await cj('https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrlimit=24&prop=imageinfo&iiprop=url|mime|extmetadata&iiurlwidth=300&format=json&origin=*&gsrsearch='+q);
+  return Object.values((j.query&&j.query.pages)||{}).map(p=>{const i=(p.imageinfo&&p.imageinfo[0])||{},m=i.extmetadata||{};return{title:p.title.replace(/^File:/,''),by:cstrip(m.Artist&&m.Artist.value),lic:(m.LicenseShortName&&m.LicenseShortName.value)||'See page',thumb:i.thumburl,page:i.descriptionurl,files:[{label:i.mime,url:i.url}]}})},
+ async archive(q){const f=['identifier','title','creator','licenseurl'].map(x=>'&fl[]='+x).join(''),j=await cj('https://archive.org/advancedsearch.php?output=json&rows=24'+f+'&q='+encodeURIComponent(decodeURIComponent(q)+' AND (licenseurl:*creativecommons* OR licenseurl:*publicdomain*)'));
+  return j.response.docs.map(d=>({title:d.title,by:[].concat(d.creator||[]).join(', '),lic:(d.licenseurl||'').replace(/^https?:\/\/(creativecommons\.org\/(licenses|publicdomain)\/)?/,'CC ').replace(/\/$/,''),thumb:'https://archive.org/services/img/'+d.identifier,page:'https://archive.org/details/'+d.identifier,ia:d.identifier}))},
+ async gutenberg(q){const j=await cj('https://gutendex.com/books/?search='+q),L=[['EPUB','application/epub+zip'],['Text','text/plain; charset=utf-8'],['Text','text/plain'],['PDF','application/pdf']];
+  return j.results.map(b=>{const f=b.formats;return{title:b.title,by:b.authors.map(a=>a.name).join(', '),lic:b.copyright===false?'Public domain (US)':'Check copyright',thumb:f['image/jpeg'],page:'https://www.gutenberg.org/ebooks/'+b.id,files:L.filter(x=>f[x[1]]).map(x=>({label:x[0],url:f[x[1]]}))}})}};
+async function cia(id){const j=await cj('https://archive.org/metadata/'+id),fl=(j.files||[]).filter(f=>f.source!=='derivative'||/mp3|mp4|pdf|epub|ogv|webm/i.test(f.name)).filter(f=>!/_meta\.|_files\.xml|__ia_thumb|\.sqlite|_archive\.torrent/.test(f.name)).slice(0,40);
+ return{files:fl.map(f=>({label:f.name+(f.size?' ('+csize(+f.size)+')':''),url:'https://archive.org/download/'+id+'/'+encodeURIComponent(f.name).replace(/%2F/g,'/')}))}}
+function ocard(it){const d=document.createElement('div');d.className='tc';if(it.thumb){const i=new Image();i.src=it.thumb;i.loading='lazy';i.alt='';i.style.cssText='width:100%;height:130px;object-fit:cover';d.append(i)}
+ const b=document.createElement('div');b.className='tb';b.innerHTML='<b></b><small></small><small></small><div class="act" style="margin-top:6px"></div>';b.children[0].textContent=it.title||'Untitled';b.children[1].textContent=it.by?'by '+it.by:'';b.children[2].textContent='License: '+it.lic;const f=b.children[3];
+ const files=l=>l.forEach(x=>{const a=document.createElement('a');a.className="btn";a.style.cssText='text-decoration:none;font-size:.78rem;padding:5px 10px';a.textContent='⬇ '+x.label;if(srv)a.href=API+'/api/dl?ok=1&url='+encodeURIComponent(x.url);else{a.href=x.url;a.target='_blank';a.rel='noopener'}f.append(a)});
+ if(it.files)files(it.files);
+ if(it.ia){const m=document.createElement('button');m.className='ghost';m.textContent='Show files';m.onclick=()=>{m.disabled=true;m.textContent='Loading…';(srv?fetch(API+'/api/ia?id='+encodeURIComponent(it.ia)).then(r=>r.json()):cia(it.ia)).then(j=>{m.remove();j.files?files(j.files):f.textContent=j.error})};f.append(m)}
+ if(it.page){const p=document.createElement('a');p.href=it.page;p.target='_blank';p.rel='noopener';p.textContent='Source ↗';p.style.fontSize='.78rem';f.append(p)}d.append(b);return d}
+async function osearch(){const q=dq('#oq').value.trim(),st=dq('#ost'),r=dq('#ores');if(!q)return;
+ st.textContent='Searching…';r.innerHTML='';try{let items;
+  if(srv){const j=await fetch(API+'/api/search?src='+dq('#os').value+'&q='+encodeURIComponent(q)).then(r=>r.json());if(j.error)throw new Error(j.error);items=j.items}
+  else items=await CSRC[dq('#os').value](encodeURIComponent(q));
+  st.textContent=items.length?'Credit the creator and follow the license shown on each item.'+(srv?'':' Links open the original file in a new tab: save it from there.'):'No results.';items.forEach(i=>r.append(ocard(i)))}catch(e){st.textContent='⚠ '+(srv?'':'Search could not reach the source. ')+e.message}}
+
+dq('#du').oninput=dsync;dq('#df').onclick=dinfo;dq('#dgo').onclick=dgo;dq('#osb').onclick=osearch;dq('#oq').onkeydown=e=>{if(e.key==='Enter')osearch()};
+dq('#dp').onclick=async()=>{try{dq('#du').value=await navigator.clipboard.readText();dsync()}catch(e){dq('#dst').textContent='Paste with Ctrl+V or long-press instead.'}};
+dq('#dcp').onclick=()=>{const t=dq('#dcmd').textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>dq('#dst').textContent='Command copied.').catch(()=>dq('#dst').textContent='Select the command and copy it.')};
+
+/* ===== Server connection ===== */
+async function probe(){srv=false;plat=false;try{const j=await fetch(API+'/api/search').then(r=>r.json());srv=!!j.error;if(srv){const c=await fetch(API+'/api/config').then(r=>r.json());plat=!!c.platforms}}catch(e){srv=false}updateServer()}
+let srvOpen=false;const openSrv=()=>{srvOpen=true;updateServer()};
+function updateServer(){const b=document.getElementById('srvbox');if(!b)return;
+ b.innerHTML='<div class="srvh"><span class="dot"></span><b></b><button class="ghost sm" id="srvt"></button></div><div id="srvd"></div>';
+ $('.dot',b).className='dot '+(srv?'on':'off');$('b',b).textContent=srv?'Server connected'+(API?' · '+API:' · this site')+(plat?'':' · platform sites off'):'Preview mode · no server connected';
+ const t=$('#srvt',b),d=$('#srvd',b),show=!srv||srvOpen;t.textContent=show&&srv?'Hide':srv?'Settings':show?'':'Connect';t.hidden=!t.textContent;d.hidden=!show;t.onclick=()=>{srvOpen=!srvOpen;updateServer()};
+ d.innerHTML='<p class="mu" style="margin:10px 0 6px">'+(srv?'Change the server address, or leave it blank to use this site.':'Format picking, site detection and yt-dlp commands work now. To download, connect a server or run the command yourself.')+'</p><div class="dbar"><input id="srvu" placeholder="Blank = this site, or http://localhost:3000"><button class="btn sm" id="srvc">Connect</button></div><p class="st" id="srvm"></p>'+
+  '<p class="mu" style="margin:8px 0 4px">No server yet? Start one from the project folder:</p><div class="cmdrow"><code>docker compose up --build -d</code><button class="ghost sm" data-c="docker compose up --build -d">Copy</button></div><div class="cmdrow"><code>npm install &amp;&amp; npm start</code><button class="ghost sm" data-c="npm install && npm start">Copy</button></div>'+
+  '<p class="mu" style="margin:6px 0 0">Then open <b>http://localhost:3000</b>, or paste that address above if you opened this page from somewhere else. A published preview blocks outside connections, so it can only copy commands.</p>';
+ $('#srvu',d).value=API;d.querySelectorAll('[data-c]').forEach(x=>x.onclick=()=>{(navigator.clipboard?navigator.clipboard.writeText(x.dataset.c):Promise.reject()).then(()=>x.textContent='Copied').catch(()=>x.textContent='Select and copy')});
+ $('#srvc',d).onclick=async()=>{const v=$('#srvu',d).value.trim().replace(/\/+$/,''),m=$('#srvm',d);if(v&&!/^https?:\/\/[^\s]+$/i.test(v)){m.textContent='Enter an address like http://localhost:3000';return}
+  m.textContent='Connecting…';API=v;try{localStorage.setItem('dk-api',v)}catch(e){}await probe();if(!srv){const m2=$('#srvm');if(m2)m2.textContent='Could not reach a server at '+(v||'this site')+'. Check it is running and that CORS_ORIGIN allows this page.'}}}
+function showDl(k,u){if(u)dq('#du').value=u;show('dl','Download');dtab(k||dk);if(u)dsync()}
+
+/* ===== Supported sites + legal views ===== */
+const ssec=document.createElement('section');ssec.id='sites';ssec.hidden=true;
+ssec.innerHTML='<div class="card" style="margin-top:0"><p class="mu"><b id="sn"></b> sites are listed below. The underlying yt-dlp engine has more than 1,700 extractors, and its generic extractor can often handle embedded videos on other pages. Sites change often, so some may stop working until updated. Adult sites are not listed.</p><input id="sq" placeholder="Search sites"></div><div id="sl"></div>';
+main.append(ssec);
+$('#sn').textContent=SMAP.length;
+function drawSites(q){const L=$('#sl');L.innerHTML='';SITES.forEach(([t,c])=>{const rows=SMAP.filter(s=>s.cat===c&&(!q||(s.n+s.d.join(' ')).toLowerCase().includes(q)));if(!rows.length)return;
+ const d=document.createElement('div');d.className='card';d.innerHTML='<h3></h3><div class="act"></div>';$('h3',d).innerHTML=c+' '+tier(t);
+ rows.forEach(s=>{const b=document.createElement('button');b.className='ghost';b.textContent=s.n;b.title=s.d.join(', ');if(t!=='drm')b.onclick=()=>{showDl('video');dq('#du').placeholder='Paste a '+s.n+' link';dq('#du').focus()};$('.act',d).append(b)});L.append(d)})}
+$('#sq').oninput=e=>drawSites(e.target.value.toLowerCase());drawSites('');
+const lsec=document.createElement('section');lsec.id='legal';lsec.hidden=true;
+lsec.innerHTML='<div class="card" style="margin-top:0"><h3>Terms, copyright and takedown</h3><p>Use this tool only for content you own, content licensed to you, or public-domain and Creative Commons material. Downloading from many platforms can break their terms of service, and saving copyrighted work without permission can be illegal where you live.</p><p>Protected streaming (DRM) and paid-course sites are never supported, and the tool does not bypass logins, paywalls or geo-blocks.</p><p>Converters and editors run entirely in your browser, and your files are never uploaded. The server, when used, keeps no library: files are deleted after you save them or within 15 minutes.</p><p>Rights holders can send takedown requests to the contact shown on the server’s /terms page. This is general information, not legal advice.</p></div>';
+main.append(lsec);dq('#dlg').onclick=e=>{e.preventDefault();showView('legal','Legal and takedown')};
+
+/* ===== Dashboard logic ===== */
+const h=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e};
+const ALL=()=>tools.flatMap(t=>t.all.map(o=>({o,t})));
+function usage(){const n=ALL().length;$('#us').textContent='0 B uploaded · '+n+' file'+(n===1?'':'s')+' made'}
+let FAV=new Set();try{FAV=new Set(JSON.parse(localStorage.getItem('dk-fav')||'[]'))}catch(e){}
+const sfav=()=>{try{localStorage.setItem('dk-fav',JSON.stringify([...FAV]))}catch(e){}};
+let sel=null,mode='All',mq='',view='grid';
+tools.forEach(t=>{
+ const s=document.createElement('section');s.id='t-'+t.id;s.hidden=true;
+ s.innerHTML='<div class="card" style="margin-top:0"><p class="mu">'+t.h+'</p>'+(t.text?'':'<label class="drop"><input type="file" multiple hidden '+(t.any?'':'accept="'+t.in.split(' ').map(e=>'.'+e).join(',')+'"')+'><b>Drop files here</b> or tap to choose<br><small>'+t.fm+'</small></label><div class="chips"></div>')+'<div class="opts">'+t.o+'</div><div class="act"><button class="btn">'+(t.go||'Convert')+'</button>'+(t.text?'':'<button class="ghost">Clear</button>')+'</div><div class="pg"><i></i></div><p class="st" role="status"></p><div class="res"></div></div>';
+ main.append(s);t.all=[];t.fl=[];
+ const st=$('.st',s),go=$('.btn',s),chips=$('.chips',s),res=$('.res',s),g=n=>{const e=$('[name='+n+']',s);return e?e.value:''},
+  prog=(p,m)=>{$('.pg i',s).style.width=Math.round(p*100)+'%';if(m!==undefined)st.textContent=m},
+  draw=()=>{if(!chips)return;chips.innerHTML='';t.fl.forEach(f=>{chips.append(h('span','',f.name+' · '+fmt(f.size)))})},
+  out=(name,blob)=>{let nn=name,k=1;while(t.all.some(x=>x.n===nn)){k++;nn=name.replace(/(\.[^.]*)?$/,' ('+k+')$1')}name=nn;const o={n:name,b:blob,t,at:new Date(),u:URL.createObjectURL(blob)};t.all.push(o);hist(name,t.n,blob.size);const r=h('div','row');
+   const pv=/^image/.test(blob.type)&&!/icon|bmp/.test(blob.type)?'<img src="'+o.u+'" alt="">':/^audio/.test(blob.type)?'<audio controls src="'+o.u+'"></audio>':/^video/.test(blob.type)?'<video controls src="'+o.u+'"></video>':'';
+   r.innerHTML='<input type="checkbox" checked aria-label="Select">'+pv+'<span class="nm"></span><small>✓ '+fmt(blob.size)+'</small><button>Save</button>';
+   $('.nm',r).textContent=name;r.insertBefore(badge(name.split('.').pop()),$('.nm',r));o.cb=$('input',r);o.row=r;
+   $('button',r).onclick=()=>save(name,blob).catch(e=>st.textContent='Save failed: '+(e.message||e.code));
+   r.onclick=e=>{if(!/BUTTON|INPUT|AUDIO|VIDEO/.test(e.target.tagName))select({k:'f',o})};res.append(r);usage()};
+ t.set=l=>{t.fl=l;draw()};
+ if(!t.text){const inp=$('input[type=file]',s),drop=$('.drop',s);
+  inp.onchange=()=>{t.fl.push(...inp.files);inp.value='';draw()};drop.ondragover=e=>{e.preventDefault();drop.classList.add('on')};drop.ondragleave=()=>drop.classList.remove('on');
+  drop.ondrop=e=>{e.preventDefault();drop.classList.remove('on');t.fl.push(...e.dataTransfer.files);draw()};
+  $('.ghost',s).onclick=()=>{t.fl=[];t.all=[];res.innerHTML='';draw();prog(0,'');usage()}}
+ go.onclick=async()=>{if(!t.text&&!t.fl.length){st.textContent='Add files first.';return}
+  res.innerHTML='';t.all=[];usage();go.disabled=true;prog(0,'Working…');
+  try{const r=await t.run(t.fl,g,out,prog);prog(1,typeof r==='string'?r:t.all.length?'Done. '+t.all.length+' file(s) ready. Tap a result for details.':'Done.');
+   if(t.all.length>1){const z=h('button','ghost','Save selected as ZIP');z.style.marginTop='10px';
+    z.onclick=async()=>{const sl=t.all.filter(o=>o.cb.checked);if(!sl.length)return;try{if(sl.length===1)return await save(sl[0].n,sl[0].b);const zz=new JSZip();sl.forEach(o=>zz.file(o.n,o.b));await save('donekwik-results.zip',await zz.generateAsync({type:'blob'}))}catch(e){st.textContent='Save failed: '+(e.message||e.code)}};res.append(z)}}
+  catch(e){prog(0,'⚠ '+(e.message||e))}go.disabled=false}});
+/* cards */
+const CC={Download:'#3b82f6',Convert:'#7c5cf0',Edit:'#e0489b',Files:'#10a37f',Text:'#e59a13'},GH={Download:'Downloaders',Convert:'Converters',Edit:'Editors',Files:'File tools',Text:'Extras'};
+const DC=[['video','vid2','Video downloader','MP4 MKV WebM MOV AVI FLV GIF · up to 8K','Download video in many containers and qualities, with optional clipping. Needs the DoneKwik server.'],['audio','headphones','Audio extractor','MP3 M4A AAC Opus OGG FLAC WAV ALAC AIFF','Pull the audio from a video link as MP3, FLAC, WAV and more. Needs the DoneKwik server.'],['subs','msg','Subtitles','SRT VTT ASS LRC','Download captions in any available language and format. Needs the DoneKwik server.'],['thumb','image','Thumbnails','JPG PNG WebP','Save a video’s thumbnail image. Needs the DoneKwik server.'],['open','search','Open-license search','Openverse Commons Archive Gutenberg','Find free-to-use images, audio, video and books with the license shown. Needs the DoneKwik server.'],['file','link','Direct file','Any public file link','Download any public file by its link. Needs the DoneKwik server.']];
+const CARDS=[...DC.map(([k,ico,n,fm,d])=>({cat:'Download',ico,n,fm,h:d,go:()=>{showDl(k);select({k:'c',c:CARDS.find(c=>c.n===n)})}})),...tools.map(t=>({cat:t.cat,ico:IK[t.id]||'file',n:t.n,fm:t.fm,h:t.h,tid:t.id,inn:t.in,any:t.any,go:()=>openTool(t.id)}))];
+CARDS.forEach(c=>c.key=c.cat+':'+c.n);
+function openTool(id,files){const t=tools.find(x=>x.id===id);show('t-'+id,t.cat);hd(['Dashboard',CATN[t.cat],t.n],t.n,t.h);if(files)t.set(files);select({k:'c',c:CARDS.find(c=>c.tid===id)})}
+const fx=n=>ext({name:n}),favIc=f=>ic('star',17,1.8,f);
+function toggleFav(c){FAV.has(c.key)?FAV.delete(c.key):FAV.add(c.key);sfav();paintHome();detail()}
+function card(c){const d=h('div','tc');d.dataset.k=c.key;d.style.setProperty('--c',CC[c.cat]);d.innerHTML='<div class="tcb"><div class="ti"></div><button class="dots" aria-label="Details" title="Details">⋮</button><b></b><small></small></div><div class="tcf"><span class="pl"><i class="pd"></i><span></span></span><span class="act2"><button class="star" title="Favorite" aria-label="Favorite"></button><button class="btn sm">Open</button></span></div>';
+ $('.ti',d).innerHTML=ic(c.ico,22);$('b',d).textContent=c.n;$('small',d).textContent=c.fm;$('.pl span',d).textContent=c.cat==='Download'?'Needs server':'In browser';$('.pd',d).style.background=c.cat==='Download'?'#e0a100':'#2fb344';
+ const s=$('.star',d);s.innerHTML=favIc(FAV.has(c.key));s.onclick=e=>{e.stopPropagation();toggleFav(c)};$('.btn',d).onclick=e=>{e.stopPropagation();c.go()};$('.dots',d).onclick=e=>{e.stopPropagation();select({k:'c',c})};d.onclick=()=>select({k:'c',c});return d}
+function fcard(x){const o=x.o,d=h('div','tc');d._o=o;d.innerHTML='<div class="tcb"></div><div class="tcf"><span class="pl"></span><span class="act2"><button class="btn sm">Save</button></span></div>';const b=$('.tcb',d);
+ if(/^image/.test(o.b.type)&&!/icon|bmp/.test(o.b.type)){const i=h('img','th');i.src=o.u;i.alt='';b.append(i)}else{const ti=h('div','ti');ti.append(badge(fx(o.n)));b.append(ti)}
+ b.append(h('b','',o.n),h('small','',x.t.n+' · '+o.at.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})));$('.pl',d).textContent=fmt(o.b.size);
+ $('.btn',d).onclick=e=>{e.stopPropagation();save(o.n,o.b).catch(()=>{})};d.onclick=()=>select({k:'f',o});return d}
+function paintHome(){const G=$('#hgrid'),so=$('#sort').value,grid=(a,fn)=>{const g=h('div','grid '+view);a.forEach(x=>g.append(fn(x)));return g};G.innerHTML='';let n=0;
+ if(mode==='res'){const it=ALL().reverse().map(({o,t})=>({n:o.n,o,t}));if(so==='name')it.sort((a,b)=>a.n.localeCompare(b.n));else if(so==='type')it.sort((a,b)=>fx(a.n).localeCompare(fx(b.n)));n=it.length;if(n)G.append(grid(it,fcard))}
+ else{const it=CARDS.filter(c=>(mode==='All'||mode==='fav'||c.cat===mode)&&(mode!=='fav'||FAV.has(c.key))&&(!mq||(c.n+' '+c.fm).toLowerCase().includes(mq))),srt=a=>{a=a.slice();if(so==='name')a.sort((x,y)=>x.n.localeCompare(y.n));else if(so==='fav')a.sort((x,y)=>FAV.has(y.key)-FAV.has(x.key));return a};n=it.length;
+  if(mode==='All'||mode==='fav')Object.keys(GH).forEach(cat=>{const a=srt(it.filter(c=>c.cat===cat));if(!a.length)return;const g=h('div','gh');g.append(h('h3','',GH[cat]),h('span','',String(a.length)));G.append(g,grid(a,card))});
+  else if(n)G.append(grid(srt(it),card))}
+ if(!n)G.append(h('p','mu',mode==='fav'?'Tap the star on a tool to pin it here.':mode==='res'?'Files you convert will show up here.':'No tools match.'));mark()}
+function mark(){document.querySelectorAll('#hgrid .tc').forEach(d=>d.classList.toggle('sel',!!sel&&(sel.k==='c'?d.dataset.k===sel.c.key:d._o===sel.o)))}
+const SUB={All:'Convert, edit and download files. Private by default.',Download:'Fetch video, audio, subtitles and open-license media. Needs a server.',Convert:'Change file formats right in your browser.',Edit:'Edit images and PDFs without uploading them.',Files:'Archives and checksums.',Text:'Quick text and data utilities.',fav:'Your pinned tools.',res:'Files you made in this session.'};
+function showHome(m,q){mode=m||'All';mq=(q||'').toLowerCase();show('home',mode==='All'?'dash':mode);
+ const T={All:'Dashboard',Download:'Downloaders',Convert:'Converters',Edit:'Editors',Files:'File tools',Text:'Extras',fav:'Favorites',res:'Results'}[mode];hd(mode==='All'?['Dashboard']:['Dashboard',T],T,SUB[mode]);$('#hdrop').hidden=mode!=='All';paintHome()}
+/* detail panel */
+function select(x){sel=x;detail();mark()}
+function detail(){const d=$('#det');d.innerHTML='';if(!sel){d.append(h('p','mu','Select a tool or a file to see its details.'));return}
+ const pv=h('div','dpv'),A=h('div','dact'),btn=(i,t,f)=>{const b=h('button','ib2');b.innerHTML=ic(i,18);b.title=t;b.setAttribute('aria-label',t);b.onclick=f;A.append(b);return b},
+  info=r=>{const w=h('div','info');r.forEach(([a,b])=>{const e=h('div','ir');e.append(h('span','mu',a),h('b','',b));w.append(e)});return w},
+  tags=a=>{const w=h('div','tags');a.forEach(x=>w.append(h('span','',x)));return w};
+ d.append(pv,A);
+ if(sel.k==='c'){const c=sel.c;pv.style.background='linear-gradient(135deg,'+CC[c.cat]+',color-mix(in srgb,'+CC[c.cat]+' 55%,#1a1030))';pv.innerHTML=ic(c.ico,68,1.3);btn('arrow','Open',c.go);const f=btn('star','Favorite',()=>toggleFav(c));f.innerHTML=favIc(FAV.has(c.key));f.style.color=FAV.has(c.key)?'var(--ac)':'';
+  d.append(h('h2','',c.n),h('p','mu',GH[c.cat]+' · '+(c.cat==='Download'?'uses your DoneKwik server':'runs in your browser')),tags(c.fm.split(/[\s·+⟵←]+/).filter(x=>x&&x.length<11&&!/^(up|to|from|audio|frames|any|file|link|public)$/i.test(x)).slice(0,14)),h('h4','','About'),h('p','mu',c.h),h('h4','','Details'),
+   info([['Category',GH[c.cat]],['Accepts',c.inn?c.inn.split(' ').length+' formats':c.any?'Any file':'Links'],['Privacy',c.cat==='Download'?'Server fetches the file':'Nothing is uploaded']]));
+  const o=h('button','btn big','Open '+c.n);o.style.marginTop='18px';o.onclick=c.go;d.append(o)}
+ else{const o=sel.o,ty=o.b.type||'';
+  if(/^image/.test(ty)&&!/icon|bmp/.test(ty)){const i=h('img');i.src=o.u;i.alt='';pv.append(i)}else if(/^video/.test(ty)){const v=h('video');v.src=o.u;v.controls=true;pv.append(v)}else if(/^audio/.test(ty)){const a=h('audio');a.src=o.u;a.controls=true;pv.append(a)}else pv.append(badge(fx(o.n)));
+  btn('download','Save',()=>save(o.n,o.b).catch(()=>{}));btn('trash','Remove',()=>{o.t.all=o.t.all.filter(x=>x!==o);o.row&&o.row.remove();URL.revokeObjectURL(o.u);usage();select(null);if(mode==='res')paintHome()});
+  const ex=fx(o.n),to=tools.filter(t=>t.id!==o.t.id&&(t.any||(t.in&&t.in.split(' ').includes(ex))));
+  d.append(h('h2','',o.n),h('p','mu',(ty||'file')+' · made with '+o.t.n),tags([ex.toUpperCase(),o.t.n]),h('h4','','About'),h('p','mu','Created in your browser. It is saved only if you press Save.'),h('h4','','Details'),info([['Size',fmt(o.b.size)],['Type',ty||'—'],['Created',o.at.toLocaleString([],{dateStyle:'medium',timeStyle:'short'})]]));
+  if(to.length){d.append(h('h4','','Send to'));const w=h('div','sendto');to.forEach(t=>{const b=h('button');b.innerHTML=ic(IK[t.id]||'file',18);b.title=t.n;b.setAttribute('aria-label','Send to '+t.n);b.onclick=()=>openTool(t.id,[new File([o.b],o.n,{type:ty})]);w.append(b)});d.append(w)}}}
+/* add files, drop strip */
+function suggest(files){const ids=new Set(),sg=$('#sg');files.forEach(f=>tools.forEach(t=>{if(t.in&&t.in.split(' ').includes(ext(f)))ids.add(t.id)}));ids.add('zip');ids.add('hash');
+ sg.innerHTML='<p class="mu" style="margin:10px 0 6px"></p><div class="act"></div>';sg.firstChild.textContent=files.length+' file(s) detected. Choose a tool:';
+ ids.forEach(id=>{const t=tools.find(x=>x.id===id),b=h('button','ghost');b.innerHTML=ic(IK[t.id]||'file',16)+'<span></span>';$('span',b).textContent=t.n;b.onclick=()=>openTool(id,files);$('.act',sg).append(b)})}
+const hdrop=$('#hdrop');hdrop.ondragover=e=>{e.preventDefault();hdrop.classList.add('on')};hdrop.ondragleave=()=>hdrop.classList.remove('on');hdrop.ondrop=e=>{e.preventDefault();hdrop.classList.remove('on');suggest([...e.dataTransfer.files])};$('#hf').onchange=e=>suggest([...e.target.files]);
+$('#addf').onclick=()=>$('#af').click();$('#af').onchange=e=>{showHome('All');suggest([...e.target.files]);e.target.value=''};
+/* nav, controls, theme */
+nav.innerHTML='<div class="logo"><span class="lm">'+MARK+'</span><span class="lt"><span class="wm">Done<i>Kwik</i></span><small>Files, done quick</small></span></div>';
+[['Workspace',[['dash','grid','Dashboard'],['Download','download','Downloader'],['Convert','convert','Converters'],['Edit','edit','Editors'],['Files','archive','File tools'],['Text','type','Extras']]],['Library',[['fav','star','Favorites'],['res','layers','Results'],['hv','clock','History']]],['Support',[['sites','globe','Supported sites'],['legal','help','Help and legal']]]].forEach(([l,items],gi)=>{
+ const sec=h('div',gi===2?'ng':'ns');sec.append(h('div','nl',l));
+ items.forEach(([k,i,n])=>{const b=h('button','ni');b.dataset.k=k;b.innerHTML=ic(i,18)+'<span></span>';$('span',b).textContent=n;b.onclick=()=>k==='dash'?showHome('All'):k==='Download'?CARDS.find(c=>c.n==='Video downloader').go():k==='sites'?showView('sites','Supported sites'):k==='legal'?showView('legal','Help and legal'):k==='hv'?showView('hv','History'):showHome(k);sec.append(b)});nav.append(sec)});
+$('#back').onclick=()=>showHome('All');
+$('#sort').onchange=paintHome;[['vg','grid'],['vl','list']].forEach(([id,v])=>$('#'+id).onclick=()=>{view=v;$('#vg').setAttribute('aria-pressed',v==='grid');$('#vl').setAttribute('aria-pressed',v==='list');paintHome()});
+$('#gs').oninput=e=>{const v=e.target.value.trim();if(!/^https?:/i.test(v))showHome('All',v)};
+$('#gs').onkeydown=e=>{const v=e.target.value.trim();if(e.key==='Enter'&&/^https?:\/\//i.test(v)){showDl('video',v);e.target.value=''}};
+const root=document.documentElement,isDark=()=>root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+function theme(t){root.dataset.theme=t;$('#theme').innerHTML=ic(t==='dark'?'sun':'moon',18);try{localStorage.setItem('dk-theme',t)}catch(e){}}
+let t0=null;try{t0=localStorage.getItem('dk-theme')}catch(e){}theme(t0||(isDark()?'dark':'light'));$('#theme').onclick=()=>theme(isDark()?'light':'dark');
+probe();showHome('All');select({k:'c',c:CARDS.find(c=>c.n==='Images')});drawH();usage();
+
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+addEventListener('unhandledrejection',e=>{console.error(e.reason)});
+</script></body></html>

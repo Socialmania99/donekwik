@@ -1,0 +1,32 @@
+{
+ "name": "DoneKwik",
+ "short_name": "DoneKwik",
+ "description": "Convert, edit and download files. Private by default.",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#11111a",
+ "theme_color": "#5a3fd0",
+ "categories": [
+  "utilities",
+  "productivity"
+ ],
+ "icons": [
+  {
+   "src": "assets/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "assets/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "assets/icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

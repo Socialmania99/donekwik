@@ -1,0 +1,22 @@
+services:
+  donekwik:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      PORT: "3000"
+      XDG_CACHE_HOME: /tmp
+      MAX_MB: ${MAX_MB:-500}
+      MAX_MINUTES: ${MAX_MINUTES:-120}
+      MAX_JOBS: ${MAX_JOBS:-2}
+      ALLOW_PLATFORMS: ${ALLOW_PLATFORMS:-0}   # 1 = enable YouTube/Instagram/etc. Read README "Legal" first
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
+      TRUST_PROXY: ${TRUST_PROXY:-0}
+      MAX_STREAMS: ${MAX_STREAMS:-20}
+      CSP_CONNECT: ${CSP_CONNECT:-}
+      CONTACT: ${CONTACT:-takedown@example.com}
+    read_only: true
+    tmpfs: ["/tmp:size=2g"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    # For public use, also put the container on a network that cannot reach your private LAN or cloud metadata services.
